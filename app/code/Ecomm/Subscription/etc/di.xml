@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+     <preference for="Magento\Catalog\Block\Product\View" type="Ecomm\Subscription\Block\Subscription" />
+     <preference for="Ecomm\Subscription\Api\SubscriptionCronRepositoryInterface"
+      type="Ecomm\Subscription\Model\SubscriptionCronRepository" />
+</config>
