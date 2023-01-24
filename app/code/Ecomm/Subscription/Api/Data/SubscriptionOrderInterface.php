@@ -20,6 +20,7 @@ interface SubscriptionOrderInterface
     public const PRODUCT_ID             = 'product_id';
     public const SUBSCRIPTION_CRON_ID   = 'subscription_cron_id';
     public const ORDER_ID               = 'order_id';
+    public const QUOTE_ID               = 'quote_id';
     public const DICOUNT_TYPE           = 'dicount_type';
     public const CREATED_AT             = 'created_at';
     public const UPDATED_AT             = 'updated_at';
@@ -99,6 +100,21 @@ interface SubscriptionOrderInterface
      * @return DataInterface
      */
     public function setOrderId($orderId);
+
+    /**
+     * Get Quote Id
+     *
+     * @return int|null
+     */
+    public function getQuoteId();
+
+    /**
+     * Set Quote Id
+     *
+     * @param int $quoteId
+     * @return DataInterface
+     */
+    public function setQuoteId($quoteId);
 
     /**
      * Get Dicount Type

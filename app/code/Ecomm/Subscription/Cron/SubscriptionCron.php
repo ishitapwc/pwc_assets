@@ -14,6 +14,7 @@ use Magento\Customer\Model\AddressFactory;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Model\Order;
+use Ecomm\Subscription\Model\SubscriptionOrderFactory;
 
 class SubscriptionCron
 {
@@ -78,6 +79,11 @@ class SubscriptionCron
     protected $order;
 
     /**
+     * @var SubscriptionOrderFactory
+     */
+    protected $subscriptionOrder;
+
+    /**
      * Get Details
      *
      * @param LoggerInterface $logger
@@ -92,6 +98,7 @@ class SubscriptionCron
      * @param CartManagementInterface $cartManagementInterface
      * @param CartRepositoryInterface $cartRepositoryInterface
      * @param Order $order
+     * @param SubscriptionOrderFactory $subscriptionOrder
      */
     public function __construct(
         LoggerInterface $logger,
@@ -105,7 +112,8 @@ class SubscriptionCron
         AddressFactory $addressFactory,
         CartManagementInterface $cartManagementInterface,
         CartRepositoryInterface $cartRepositoryInterface,
-        Order $order
+        Order $order,
+        SubscriptionOrderFactory $subscriptionOrder
     ) {
 
         $this->logger = $logger;
@@ -120,6 +128,7 @@ class SubscriptionCron
         $this->cartManagementInterface = $cartManagementInterface;
         $this->cartRepositoryInterface = $cartRepositoryInterface;
         $this->order = $order;
+        $this->subscriptionOrder = $subscriptionOrder;
     }
 
     /**
@@ -129,15 +138,29 @@ class SubscriptionCron
      */
     public function execute()
     {
+        //die;
         $runnerData = $this->subscriptionCronRepositoryInterface->getCronFilter();
+        $reports = [];
         if (count($runnerData) > 0) {
             foreach ($runnerData as $lodder) {
+                $insert = [];
                 $stopService = $this->getEnd($lodder);
-                $report = $this->cronOrderCreater($stopService);
-                $this->logger->info('order '. json_encode($report));
+                if ($stopService['status'] != 'End') {
+                    $report = $this->cronOrderCreater($stopService);
+                    $insert['subscription'] = $report['subscription']->getData();
+                    $insert['order_list'] = $report['order_list'];
+                    $insert['status'] = $report['status'];
+                } else {
+                    $reports[$lodder->getId()] = $stopService;
+                    $stopService['value']->save();
+                    $insert['subscription'] = $stopService['value']->getData();
+                    $insert['status'] = 'end';
+                }
+                $reports[$lodder->getId()] = $insert;
             }
+            $this->logger->info('order '. json_encode($reports));
         } else {
-            $this->logger->info('Data Null ');
+            $this->logger->info('Subscription data null ');
         }
     }
 
@@ -191,13 +214,8 @@ class SubscriptionCron
         $quote = $this->cartRepositoryInterface->get($quote->getId());
         $orderId = $this->cartManagementInterface->placeOrder($quote->getId());
         $order = $this->order->load($orderId);
-        if ($order->getId()) {
-
-            $result['order_id']= $order->getIncrementId();
-        } else {
-            $result=['error'=>1,'msg'=>'Your custom message'];
-        }
-        return $result;
+        $orderSave = $this->saveOrderDetails($quote, $order, $stopService['value']);
+        return $orderSave;
     }
 
     /**
@@ -208,7 +226,6 @@ class SubscriptionCron
      */
     private function getEnd($loadder):array
     {
-        $data = [];
         $status = 'Not_End';
         switch ($loadder->getSubscriptionEndType()) {
             case 'Date':
@@ -218,8 +235,7 @@ class SubscriptionCron
                 }
                 return ['status'=>$status,'value'=>$loadder];
             case 'Cycle':
-                if ($loadder->getSubscriptionEndValue() == 1) {
-                    $loadder->setSubscriptionEndValue(0);
+                if ($loadder->getSubscriptionEndValue() == 0) {
                     $loadder->setStatus(false);
                     $status = 'End';
                 } else {
@@ -252,12 +268,60 @@ class SubscriptionCron
     /**
      * Get Discount Price
      *
-     * @param array $quote
-     * @param Address $address
-     * @return array
+     * @param Quote $quote
+     * @param Order $order
+     * @param SubscriptionCronRepositoryInterface $loader
      */
-    public function saveOrderDetails($quote, $address)
+    public function saveOrderDetails($quote, $order, $loader)
     {
-        return '';
+        $subscriptionOrder =  $this->subscriptionOrder->create();
+        $subscriptionOrder->setCustomerId($loader->getCustomerId());
+        $subscriptionOrder->setProductId($loader->getProductId());
+        $subscriptionOrder->setSubscriptionCronId($loader->getId());
+        $subscriptionOrder->setQuoteId($quote->getId());
+        if ($order->getIncrementId()) {
+            $subscriptionOrder->setOrderId($order->getIncrementId());
+            $subscriptionOrder->setStatus(true);
+        } else {
+            $subscriptionOrder->setOrderId($order->getIncrementId());
+            $subscriptionOrder->setStatus(false);
+        }
+        try {
+            $subscriptionOrder->save();
+            $loader->setLastActionStatus(true);
+            $loader->setLastActionDate(date("Y-m-d"));
+            $loader->setNextDate($this->getSubscriptionDate($loader->getSubscriptionType()));
+            $this->subscriptionCronRepositoryInterface->save($loader);
+        } catch (\Exception $e) {
+            $loader->setLastActionStatus(false);
+            $loader->setLastActionDate(date("Y-m-d"));
+            $loader->setNextDate($this->getSubscriptionDate($loader->getSubscriptionType()));
+            $this->subscriptionCronRepositoryInterface->save($loader);
+            return ['status'=>'error', 'order_list'=>json_encode($e), 'subscription'=>$loader];
+        }
+        return ['order_list'=>$subscriptionOrder->getData(),
+        'status'=>'success', 'subscription'=>$loader];
+    }
+
+    /**
+     * Get Discount Price
+     *
+     * @param string $type
+     */
+    public function getSubscriptionDate($type)
+    {
+
+        switch ($type) {
+            case 'daily':
+                return date("Y-m-d", strtotime("+1 day"));
+            case 'bidaily':
+                return date("Y-m-d", strtotime("+2 day"));
+            case 'weekly':
+                return date("Y-m-d", strtotime("+1 week"));
+            case 'biweekly':
+                return date("Y-m-d", strtotime("+2 week"));
+            case 'monthly':
+                return date("Y-m-d", strtotime("+1 month"));
+        }
     }
 }
