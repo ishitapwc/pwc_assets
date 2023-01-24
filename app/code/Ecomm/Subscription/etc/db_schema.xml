@@ -21,13 +21,13 @@
          <column name="created_at" on_update="false"  nullable="false" xsi:type="datetime" comment="Subscription created date"  default="CURRENT_TIMESTAMP" />
          <column name="updated_at" on_update="true" nullable="false" xsi:type="datetime" comment="Subscription updated date" default="CURRENT_TIMESTAMP" />
          <column name="subscription_type" nullable="false" xsi:type="varchar" length="255" comment="Subscription Type"/>
-         <column name="subscription_start_date" on_update="true" nullable="false" xsi:type="date" comment="Subscription start date"/>
+         <column name="subscription_start_date" nullable="false" xsi:type="date" comment="Subscription start date"/>
          <column name="dicount_type" nullable="false" xsi:type="varchar" length="255" comment="Discount Type"/>
          <column name="dicount_value" xsi:type="decimal"  nullable="false" scale="6" precision="12" comment="Discount Value"/>
          <column name="subscription_end_type" nullable="false" xsi:type="varchar" length="40" comment="Subscription End Type"/>
          <column name="subscription_end_value" nullable="false" xsi:type="varchar" length="40" comment="Subscription End Type Value"/>
-         <column name="next_date" on_update="false" nullable="false" xsi:type="date" comment="Subscription next date"/>
-         <column name="last_action_date" on_update="false" nullable="false" xsi:type="datetime" comment="Last Subscription Date"/>
+         <column name="next_date" nullable="false" xsi:type="date" comment="Subscription next date"/>
+         <column name="last_action_date"  nullable="false" xsi:type="datetime" comment="Last Subscription Date"/>
          <column name="last_action_status" nullable="true" xsi:type="tinyint" comment="Last Subscription Status"/>
          <column name="status" nullable="true" xsi:type="tinyint" comment="Status"/>
     </table>
