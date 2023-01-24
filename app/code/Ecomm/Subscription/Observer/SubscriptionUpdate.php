@@ -60,9 +60,9 @@ class SubscriptionUpdate implements ObserverInterface
         $subscriptionStartDate = $this->request->getParam('startdate');
         $subscriptionStartDate = date('Y-m-d', strtotime($subscriptionStartDate));
         $subscriptionEndType = $this->request->getParam('subscription_end_by');
-        $subscriptionEnd = $this->getEndValue($subscriptionEndType);
-
+        
         if ($subscription == 1) {
+            $subscriptionEnd = $this->getEndValue($subscriptionEndType);
             $item->setData('subscription', true);
             $item->setData('frequency', $subscriptionType);
             if ($subscriptionStartDate > date('Y-m-d')) {
