@@ -70,7 +70,7 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
     {
         return $this->subscriptionCronFactory->create()->getCollection()
         ->addFieldToFilter('status', true)
-        ->addFieldToFilter('next_date', date('Y-m-d'));
+        ->addFieldToFilter(['next_date','subscription_end_value'], [['eq'=>date('Y-m-d')],['eq'=>date('Y-m-d')]]);
     }
 
     /**

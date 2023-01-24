@@ -41,6 +41,7 @@
         <column name="product_id"  nullable="false" xsi:type="int" comment="Product Id"/>
         <column name="subscription_cron_id"  nullable="false" xsi:type="int" comment="Subscription Cron Id"/>
         <column name="order_id"  nullable="false" xsi:type="int" comment="Order Id"/>
+        <column name="quote_id"  nullable="false" xsi:type="int" comment="Qoute Id"/>
         <column name="dicount_type" nullable="false" xsi:type="varchar" length="255" comment="Discount Type"/>
         <column name="created_at" on_update="false"  nullable="false" xsi:type="datetime" comment="Order created date"  default="CURRENT_TIMESTAMP" />
         <column name="updated_at" on_update="true" nullable="false" xsi:type="datetime" comment="Order updated date" default="CURRENT_TIMESTAMP" />

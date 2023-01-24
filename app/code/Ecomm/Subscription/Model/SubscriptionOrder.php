@@ -113,6 +113,27 @@ class SubscriptionOrder extends AbstractModel implements SubscriptionOrderInterf
     }
 
     /**
+     * Get Order Id
+     *
+     * @return mixed
+     */
+    public function getQuoteId()
+    {
+        return $this->getData(SubscriptionOrderInterface::QUOTE_ID);
+    }
+
+    /**
+     * Set Order Id
+     *
+     * @param int $quoteId
+     * @return string
+     */
+    public function setQuoteId($quoteId)
+    {
+        return $this->setData(SubscriptionOrderInterface::QUOTE_ID, $quoteId);
+    }
+
+    /**
      * Get Dicount Type
      *
      * @return mixed
