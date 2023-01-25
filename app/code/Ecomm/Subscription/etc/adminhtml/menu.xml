@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Ecomm_Subscription:etc/menu.xsd">
-    <menu>
-        <add id="Ecomm_Subscription::home" title="Subscription" module="Ecomm_Subscription" sortOrder="51" resource="Ecomm_Subscription::home" 
-        />
-        <add id="Ecomm_Subscription::order" title="Subscription Cron List" module="Ecomm_Subscription" sortOrder="10"  action="subscription/index/index" resource="Ecomm_Subscription::order" parent="Ecomm_Subscription::home"/>
-    </menu>
-</config>
