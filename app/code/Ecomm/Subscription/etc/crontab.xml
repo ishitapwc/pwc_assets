@@ -6,7 +6,7 @@
 
     <job name="subscription_tab" instance="Ecomm\Subscription\Cron\SubscriptionCron" method="execute">
 
-        <schedule>*/1 * * * *</schedule>
+        <schedule>*/30 * * * *</schedule>
 
     </job>
 

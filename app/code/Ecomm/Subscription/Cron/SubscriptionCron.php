@@ -207,10 +207,6 @@ class SubscriptionCron
         $quote->collectTotals()->save();
 
         // Create Order From Quote
-        
-        //$order = $this->quoteManagement->submit($quote);
-       // Create Order From Quote
-        $this->logger->info('quote Id '. $quote->getId());
         $quote = $this->cartRepositoryInterface->get($quote->getId());
         $orderId = $this->cartManagementInterface->placeOrder($quote->getId());
         $order = $this->order->load($orderId);
@@ -251,18 +247,6 @@ class SubscriptionCron
             default:
                 throw new InputException(__('Something Went Wrong'));
         }
-    }
-
-    /**
-     * Get Discount Price
-     *
-     * @param array $quote
-     * @param Address $address
-     * @return array
-     */
-    public function setAddress($quote, $address)
-    {
-        return '';
     }
 
     /**
