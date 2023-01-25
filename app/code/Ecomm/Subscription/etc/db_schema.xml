@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PwC India
+ *
+ * @category Magento
+ * @package BekaertSWSb2B_ProductPriceUpdate
+ * @author PwC India
+ * @license GNU General Public License ("GPL") v3.0
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="subscription_cron" resource="default" engine="innodb" comment="Subscription cron Table" >
+        <column xsi:type="int" name="entity_id" padding="6" unsigned="true" nullable="false" identity="true" comment=" Id"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+       <column name="entity_id"/>
+    </constraint>
+         <column name="customer_id"  nullable="false" xsi:type="int" comment="Customer Id"/>
+         <column name="product_id"  nullable="false" xsi:type="int" comment="Product Id"/>
+         <column name="created_at" on_update="false"  nullable="false" xsi:type="datetime" comment="Subscription created date"  default="CURRENT_TIMESTAMP" />
+         <column name="updated_at" on_update="true" nullable="false" xsi:type="datetime" comment="Subscription updated date" default="CURRENT_TIMESTAMP" />
+         <column name="subscription_type" nullable="false" xsi:type="varchar" length="255" comment="Subscription Type"/>
+         <column name="subscription_start_date" nullable="false" xsi:type="date" comment="Subscription start date"/>
+         <column name="dicount_type" nullable="false" xsi:type="varchar" length="255" comment="Discount Type"/>
+         <column name="dicount_value" xsi:type="decimal"  nullable="false" scale="6" precision="12" comment="Discount Value"/>
+         <column name="subscription_end_type" nullable="false" xsi:type="varchar" length="40" comment="Subscription End Type"/>
+         <column name="subscription_end_value" nullable="false" xsi:type="varchar" length="40" comment="Subscription End Type Value"/>
+         <column name="next_date" nullable="false" xsi:type="date" comment="Subscription next date"/>
+         <column name="last_action_date"  nullable="false" xsi:type="datetime" comment="Last Subscription Date"/>
+         <column name="last_action_status" nullable="true" xsi:type="tinyint" comment="Last Subscription Status"/>
+         <column name="status" nullable="true" xsi:type="tinyint" comment="Status"/>
+    </table>
+
+    <table name="subscription_order" resource="default" engine="innodb" comment="Subscription Order Details" >
+        <column xsi:type="int" name="entity_id" padding="6" unsigned="true" nullable="false" identity="true" comment=" Id"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+       <column name="entity_id"/>
+    </constraint>
+        <column name="customer_id"  nullable="false" xsi:type="int" comment="Customer Id"/>
+        <column name="product_id"  nullable="false" xsi:type="int" comment="Product Id"/>
+        <column name="subscription_cron_id"  nullable="false" xsi:type="int" comment="Subscription Cron Id"/>
+        <column name="order_id"  nullable="false" xsi:type="int" comment="Order Id"/>
+        <column name="quote_id"  nullable="false" xsi:type="int" comment="Qoute Id"/>
+        <column name="dicount_type" nullable="false" xsi:type="varchar" length="255" comment="Discount Type"/>
+        <column name="created_at" on_update="false"  nullable="false" xsi:type="datetime" comment="Order created date"  default="CURRENT_TIMESTAMP" />
+        <column name="updated_at" on_update="true" nullable="false" xsi:type="datetime" comment="Order updated date" default="CURRENT_TIMESTAMP" />
+        <column name="status" nullable="true" xsi:type="tinyint" comment="Status"/>
+    </table>
+
+    <table name="quote_item" resource="default" engine="innodb">
+        <column xsi:type="tinyint" name="subscription" nullable="true"  comment="Additional reference_number"/>
+        <column xsi:type="varchar" name="frequency" nullable="true" length="240" comment="Additional attachment"/>
+        <column xsi:type="date" name="subscription_start_date" nullable="true"  comment="Requested delivery date"/>
+        <column xsi:type="varchar" name="subscription_end_type" nullable="true" length="240" comment="Additional attachment"/>
+        <column xsi:type="varchar" name="subscription_end" nullable="true" length="240" comment="Additional attachment"/>
+    </table>
+
+    <table name="sales_order_item" resource="default" engine="innodb">
+        <column xsi:type="tinyint" name="subscription" nullable="true"  comment="Additional reference_number"/>
+        <column xsi:type="varchar" name="frequency" nullable="true" length="240" comment="Additional attachment"/>
+        <column xsi:type="date" name="subscription_start_date" nullable="true"  comment="Requested delivery date"/>
+        <column xsi:type="varchar" name="subscription_end_type" nullable="true" length="240" comment="Additional attachment"/>
+        <column xsi:type="varchar" name="subscription_end" nullable="true" length="240" comment="Additional attachment"/>
+    </table>
+</schema>

@@ -1,0 +1,12 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+     <update handle="customer_account"/>
+     <body> <referenceBlock name="page.main.title"> 
+     <action method="setPageTitle">
+          <argument translate="true" name="title" xsi:type="string">Subscription</argument>
+          </action> </referenceBlock>
+          <referenceContainer name="content">
+               <block class="Magento\Framework\View\Element\Template" cacheable="true" name="my_tab" template="Ecomm_Subscription::subscription.phtml"> </block> 
+               </referenceContainer> 
+               
+               </body> 
+               </page>
