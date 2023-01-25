@@ -15,6 +15,8 @@ use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Ecomm\Subscription\Model\SubscriptionOrderFactory;
+use Magento\Framework\Mail\Template\TransportBuilder;
+use Magento\Framework\Translate\Inline\StateInterface;
 
 class SubscriptionCron
 {
@@ -84,6 +86,24 @@ class SubscriptionCron
     protected $subscriptionOrder;
 
     /**
+     * TransportBuilder
+     *
+     * @var TransportBuilder
+     */
+
+    protected $_transportBuilder;
+
+    /**
+     * InlineTranslation
+     *
+     * @var StateInterface
+     */
+
+    protected $inlineTranslation;
+
+
+
+    /**
      * Get Details
      *
      * @param LoggerInterface $logger
@@ -113,7 +133,9 @@ class SubscriptionCron
         CartManagementInterface $cartManagementInterface,
         CartRepositoryInterface $cartRepositoryInterface,
         Order $order,
-        SubscriptionOrderFactory $subscriptionOrder
+        SubscriptionOrderFactory $subscriptionOrder,
+        TransportBuilder $_transportBuilder,
+        StateInterface $inlineTranslation
     ) {
 
         $this->logger = $logger;
@@ -129,6 +151,8 @@ class SubscriptionCron
         $this->cartRepositoryInterface = $cartRepositoryInterface;
         $this->order = $order;
         $this->subscriptionOrder = $subscriptionOrder;
+        $this->_transportBuilder = $_transportBuilder;
+        $this->inlineTranslation = $inlineTranslation;
     }
 
     /**
@@ -206,6 +230,27 @@ class SubscriptionCron
         // Collect Totals & Save Quote
         $quote->collectTotals()->save();
 
+
+        // Subscription Purchase Mail Start
+        $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
+        $templateVars = [
+                            'store' => $this->storeManager->getStore(),
+                            'message'   => 'We are excited to welcome you to the community, To make sure you have best product, Thank you for choosing "Daily Subscription Plan" based subscription automaticattly payment will be taken from your account',
+                            'feature1' => 'Cancel at any time, No contracts or commitments. '
+                        ];
+        $from = ['email' => "info@pwc.com", 'name' => 'Subscription Purchase'];
+        $this->inlineTranslation->suspend();
+        $to = ['vselvakumar04@gmail.com'];
+        $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_purchase')
+                        ->setTemplateOptions($templateOptions)
+                        ->setTemplateVars($templateVars)
+                        ->setFrom($from)
+                        ->addTo($to)
+                        ->getTransport();
+        $transport->sendMessage();
+        $this->inlineTranslation->resume();
+        // Subscription Purchase Mail End
+
         // Create Order From Quote
         $quote = $this->cartRepositoryInterface->get($quote->getId());
         $orderId = $this->cartManagementInterface->placeOrder($quote->getId());
@@ -228,12 +273,14 @@ class SubscriptionCron
                 if ($loadder->getSubscriptionEndValue() == date('Y-m-d')) {
                     $loadder->setStatus(false);
                     $status = 'End';
+                    $this->subscriptionEndMail();
                 }
                 return ['status'=>$status,'value'=>$loadder];
             case 'Cycle':
-                if ($loadder->getSubscriptionEndValue() == 0) {
+                if ($loadder->getSubscriptionEndValue() == '0') {
                     $loadder->setStatus(false);
                     $status = 'End';
+                    $this->subscriptionEndMail();
                 } else {
                     $loadder->setSubscriptionEndValue($loadder->getSubscriptionEndValue()-1);
                 }
@@ -242,11 +289,33 @@ class SubscriptionCron
                 if ($loadder->getSubscriptionEndValue() == 'Yes') {
                     $loadder->setStatus(false);
                     $status = 'End';
+                    $this->subscriptionEndMail();
                 }
                 return ['status'=>$status,'value'=>$loadder];
             default:
                 throw new InputException(__('Something Went Wrong'));
         }
+    }
+
+
+    public function subscriptionEndMail(){
+        $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
+        $templateVars = [
+                            'store' => $this->storeManager->getStore(),
+                            'message'   => 'As you requested, we will cancelled your subscription plan, effective from today.',
+                            'msg' => 'Obviously we love to have you back.'
+                        ];
+        $from = ['email' => "info@pwc.com", 'name' => 'Subscription Cancel'];
+        $this->inlineTranslation->suspend();
+        $to = ['vselvakumar04@gmail.com'];
+        $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_cancel')
+                        ->setTemplateOptions($templateOptions)
+                        ->setTemplateVars($templateVars)
+                        ->setFrom($from)
+                        ->addTo($to)
+                        ->getTransport();
+        $transport->sendMessage();
+        $this->inlineTranslation->resume();
     }
 
     /**
