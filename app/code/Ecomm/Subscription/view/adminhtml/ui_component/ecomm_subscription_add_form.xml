@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">pwc_b2borders_add_form.pwc_b2borders_add_form_data_source</item>
+			<item name="deps" xsi:type="string">pwc_b2borders_add_form.pwc_b2borders_add_form_data_source</item>
+		</item>
+		<item name="label" xsi:type="string" >General Information</item>
+
+		<item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">Pwc\B2bOrders\Block\Adminhtml\Edit\Button\Back</item>
+            <item name="delete" xsi:type="string">Pwc\B2bOrders\Block\Adminhtml\Edit\Button\Delete</item>
+            <!-- <item name="reset" xsi:type="string">Pwc\B2bOrders\Block\Adminhtml\Edit\Button\Reset</item> -->
+            <item name="save" xsi:type="string">Pwc\B2bOrders\Block\Adminhtml\Edit\Button\Save</item>
+        </item>
+
+
+		<item name="config" xsi:type="array">
+			<item name="dataScope" xsi:type="string">data</item>	
+			<item name="namespace" xsi:type="string">pwc_b2borders_add_form</item>
+		</item>
+		<item name="spinner" xsi:type="string">po_status_information</item>
+		<item name="template" xsi:type="string">templates/form/collapsible</item>
+	</argument>
+	<dataSource name="pwc_b2borders_add_form_data_source">
+		<argument name="dataProvider" xsi:type="configurableObject">
+			<argument name="class" xsi:type="string">Pwc\B2bOrders\Model\DataProvider</argument>
+			<argument name="name" xsi:type="string">pwc_b2borders_add_form_data_source</argument>
+			<argument name="primaryFieldName" xsi:type="string">entity_id</argument>
+			<argument name="requestFieldName" xsi:type="string">entity_id</argument>
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="submit_url" xsi:type="url" path="*/*/Save"/>
+				</item>
+			</argument>
+		</argument>
+		<argument name="data" xsi:type="array">
+			<item name="js_config" xsi:type="array">
+				<item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+			</item>
+		</argument>
+	</dataSource>
+	<fieldset name="po_status_information">
+		<argument name="data" xsi:type="array">
+			<item name="config" xsi:type="array">
+				<item name="label" xsi:type="string"/>
+			</item>
+		</argument>
+		<argument name="data" xsi:type="array">
+			<item name="config" xsi:type="array">
+				<item name="collapsible" xsi:type="boolean">false</item>
+				<item name="label" xsi:type="string" >General Information</item>
+				<item name="sortOrder" xsi:type="number">20</item>
+			</item>
+		</argument>
+		<!-- <field name="entity_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Entity Id</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">orders</item>
+                    <item name="dataScope" xsi:type="string">entity_id</item>
+                </item>
+            </argument>
+        </field> -->
+        <field name="product_name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Product Name</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">orders</item>
+                    <item name="dataScope" xsi:type="string">product_name</item>
+                </item>
+            </argument>
+        </field>
+        <field name="sales_order_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Sales Order Id</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">orders</item>
+                    <item name="dataScope" xsi:type="string">sales_order_id</item>
+                </item>
+            </argument>
+        </field>
+	</fieldset>
+</form>
