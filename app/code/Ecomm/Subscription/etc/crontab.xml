@@ -12,4 +12,16 @@
 
 </group>
 
+    <group id="subscription_billing_remainder">
+        <job instance="Ecomm\Subscription\Cron\SubscriptionBillingRemainder" method="execute" name="subscription_template_billing_remainder">
+            <schedule>35 0 * * *</schedule>
+        </job>
+    </group>
+
+    <group id="subscription_remainder_days">
+        <job instance="Ecomm\Subscription\Cron\SubscriptionRemainderDays" method="execute" name="subscription_template_remainder_days">
+            <schedule>30 0 * * *</schedule>
+        </job>
+    </group>
+
 </config>
