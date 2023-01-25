@@ -37,6 +37,13 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
      */
     protected $collection;
 
+    /**
+     * Get Details
+     *
+     * @param SubscriptionCron $subscriptionCron
+     * @param Collection $collection
+     * @param SubscriptionCronFactory $subscriptionCronFactory
+     */
     public function __construct(
         SubscriptionCron $subscriptionCron,
         Collection $collection,
