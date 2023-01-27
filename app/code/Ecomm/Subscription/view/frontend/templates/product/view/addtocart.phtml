@@ -36,15 +36,15 @@
             <div class="fieldset">
                 <div class="field qty">
                     <div class="control text-center">
-                        <label class="label">
+                        <!--<label class="label">
                             <input type="radio" name="subscription" value="0" title="No Subscription"
                             class="input-radio" data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
                             <span><?= $block->escapeHtml(__('No Subscription')) ?></span>
-                        </label>
+                        </label>-->
                         <label class="label">
-                            <input type="radio" name="subscription" value="1" title="Subscription"
+                            <input type="checkbox" name="subscription" value="1" title="Subscription"
                             class="input-radio" data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
-                            <span><?= $block->escapeHtml(__('Subscription With Discount')) ?></span>
+                            <span><?= $block->escapeHtml(__('Subscription')) ?></span>
                         </label>
                     </div>
                 </div>
@@ -141,7 +141,7 @@ require(['jquery', "mage/calendar"], function($){
             $("input[name=enddate]").val(today);
             $("input[name=enddate]").attr('min', today);
         $('input[name="subscription"]').on('click',function(){
-            if($(this).val() == 1)
+            if($(this).prop('checked') == true)
                 $('div.subscription').show();
             else
                 $('div.subscription').hide();

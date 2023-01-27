@@ -165,7 +165,9 @@ class SubscriptionCron
         //die;
         $runnerData = $this->subscriptionCronRepositoryInterface->getCronFilter();
         $reports = [];
+       
         if (count($runnerData) > 0) {
+            
             foreach ($runnerData as $lodder) {
                 $insert = [];
                 $stopService = $this->getEnd($lodder);
@@ -196,12 +198,14 @@ class SubscriptionCron
      */
     private function cronOrderCreater($stopService)
     {
+        
         $load = $stopService['value'];
         $store=$this->storeManager->getStore(1);
         $websiteId = $this->storeManager->getStore()->getWebsiteId();
         $cartId = $this->cartManagementInterface->createEmptyCart();
         $quote = $this->cartRepositoryInterface->get($cartId);
         $customer= $this->customerRepository->getById($load->getCustomerId());
+        $customerEmail = $customer->getEmail();
         $quote->setCurrency();
         $quote->assignCustomer($customer);
         $quote->setCustomerIsGuest(0);
@@ -230,6 +234,8 @@ class SubscriptionCron
         // Collect Totals & Save Quote
         $quote->collectTotals()->save();
 
+        
+
 
         // Subscription Purchase Mail Start
         $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
@@ -240,7 +246,8 @@ class SubscriptionCron
                         ];
         $from = ['email' => "info@pwc.com", 'name' => 'Subscription Purchase'];
         $this->inlineTranslation->suspend();
-        $to = ['vselvakumar04@gmail.com'];
+        
+        $to = [$customerEmail];
         $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_purchase')
                         ->setTemplateOptions($templateOptions)
                         ->setTemplateVars($templateVars)
@@ -268,19 +275,21 @@ class SubscriptionCron
     private function getEnd($loadder):array
     {
         $status = 'Not_End';
+        $customer= $this->customerRepository->getById($loadder->getCustomerId());
+        $customerEmail = $customer->getEmail();
         switch ($loadder->getSubscriptionEndType()) {
             case 'Date':
                 if ($loadder->getSubscriptionEndValue() == date('Y-m-d')) {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail();
+                    $this->subscriptionEndMail($customerEmail, 'Date');
                 }
                 return ['status'=>$status,'value'=>$loadder];
             case 'Cycle':
                 if ($loadder->getSubscriptionEndValue() == '0') {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail();
+                    $this->subscriptionEndMail($customerEmail, 'Cycle');
                 } else {
                     $loadder->setSubscriptionEndValue($loadder->getSubscriptionEndValue()-1);
                 }
@@ -289,7 +298,7 @@ class SubscriptionCron
                 if ($loadder->getSubscriptionEndValue() == 'Yes') {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail();
+                    $this->subscriptionEndMail($customerEmail, 'Until');
                 }
                 return ['status'=>$status,'value'=>$loadder];
             default:
@@ -298,16 +307,30 @@ class SubscriptionCron
     }
 
 
-    public function subscriptionEndMail(){
+    public function subscriptionEndMail($customerEmail, $type){
         $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
-        $templateVars = [
-                            'store' => $this->storeManager->getStore(),
-                            'message'   => 'As you requested, we will cancelled your subscription plan, effective from today.',
-                            'msg' => 'Obviously we love to have you back.'
-                        ];
+        if($type == 'Until'){
+            $templateVars = [
+                'store' => $this->storeManager->getStore(),
+                'message'   => 'As you requested, we will cancelled your subscription plan, effective from today.',
+                'msg' => 'Obviously we love to have you back.'
+            ];
+        }elseif($type == 'Cycle'){
+            $templateVars = [
+                'store' => $this->storeManager->getStore(),
+                'message'   => 'Based on your subscription cycle has been ended by toady.',
+                'msg' => 'Obviously we love to have you back.'
+            ];
+        }elseif($type == 'Date'){
+            $templateVars = [
+                'store' => $this->storeManager->getStore(),
+                'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.',
+                'msg' => 'Obviously we love to have you back.'
+            ];
+        }
         $from = ['email' => "info@pwc.com", 'name' => 'Subscription Cancel'];
         $this->inlineTranslation->suspend();
-        $to = ['vselvakumar04@gmail.com'];
+        $to = [$customerEmail];
         $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_cancel')
                         ->setTemplateOptions($templateOptions)
                         ->setTemplateVars($templateVars)
