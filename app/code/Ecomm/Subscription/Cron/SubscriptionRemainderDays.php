@@ -90,33 +90,36 @@ class SubscriptionRemainderDays
 
                 $dateCount =  abs(round($datediff / (60 * 60 * 24)));
 
-                $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
-                $logger = new \Zend_Log();
-                $logger->addWriter($writer);
-                $logger->info('Mail Sending Start');
+                if($dateCount < 10){
+
+                    $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
+                    $logger = new \Zend_Log();
+                    $logger->addWriter($writer);
+                    $logger->info('Mail Sending Start');
 
 
-                $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID];
-                $templateVars = [
-                        'message'   => 'Subscription expire in '.$dateCount.' days Please maintain available fund in your account',
-                        'name' => $customer->getFirstName()." ".$customer->getLastName(),
-                        'date' => $list->getNextDate(),
-                        'product' => 'sample',
-                        'days' => $dateCount
-                        ];
-                $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];
-                $this->inlineTranslation->suspend();
-                $to = [$customerEmail];
-                $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_remainder_days')
-                                ->setTemplateOptions($templateOptions)
-                                ->setTemplateVars($templateVars)
-                                ->setFrom($from)
-                                ->addTo($to)
-                                ->getTransport();
-                $transport->sendMessage();
-                $this->inlineTranslation->resume();
+                    $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID];
+                    $templateVars = [
+                            'message'   => 'Subscription expire in '.$dateCount.' days Please maintain available fund in your account on '.$nextDate,
+                            'name' => $customer->getFirstName()." ".$customer->getLastName(),
+                            'date' => $list->getNextDate(),
+                            'product' => 'sample',
+                            'days' => $dateCount
+                            ];
+                    $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];
+                    $this->inlineTranslation->suspend();
+                    $to = [$customerEmail];
+                    $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_remainder_days')
+                                    ->setTemplateOptions($templateOptions)
+                                    ->setTemplateVars($templateVars)
+                                    ->setFrom($from)
+                                    ->addTo($to)
+                                    ->getTransport();
+                    $transport->sendMessage();
+                    $this->inlineTranslation->resume();
 
-                $logger->info('Mail Sent End');
+                    $logger->info('Mail Sent End');
+                }
             }
         }
     }
