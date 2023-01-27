@@ -75,12 +75,21 @@ class SubscriptionRemainderDays
     }
 
     public function execute(){
+        
         $emailData = $this->subscriptionCronRepositoryInterface->getCronEmailFilter();
         if(count($emailData) > 0){
             foreach($emailData as $list)
             {
                 $customer= $this->customerRepository->getById($list->getCustomerId());
                 $customerEmail = $customer->getEmail();
+                $nextDate = $list->getNextDate();
+
+                $now = time();
+                $your_date = strtotime($nextDate);
+                $datediff = $now - $your_date;
+
+                $dateCount =  abs(round($datediff / (60 * 60 * 24)));
+
                 $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
                 $logger = new \Zend_Log();
                 $logger->addWriter($writer);
@@ -89,11 +98,11 @@ class SubscriptionRemainderDays
 
                 $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID];
                 $templateVars = [
-                        'message'   => 'Subscription expire in 3 days Please maintain available fund in your account',
+                        'message'   => 'Subscription expire in '.$dateCount.' days Please maintain available fund in your account',
                         'name' => $customer->getFirstName()." ".$customer->getLastName(),
                         'date' => $list->getNextDate(),
                         'product' => 'sample',
-                        'days' => '3'
+                        'days' => $dateCount
                         ];
                 $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];
                 $this->inlineTranslation->suspend();
