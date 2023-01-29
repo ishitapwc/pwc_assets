@@ -55,6 +55,12 @@ class SubscriptionRemainderDays
      */
     protected $searchCriteriaBuilder;
 
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+
+    public $scopeConfig;
+
     
     public function __construct(
         TransportBuilder $_transportBuilder,
@@ -63,7 +69,8 @@ class SubscriptionRemainderDays
         StateInterface $inlineTranslation,
         StoreManagerInterface $storeManager,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
+        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         $this->storeManager     = $storeManager;
         $this->_transportBuilder = $_transportBuilder;
@@ -72,55 +79,68 @@ class SubscriptionRemainderDays
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->subscriptionCronRepositoryInterface = $subscriptionCronRepositoryInterface;
         $this->customerRepository = $customerRepository;
+        $this->scopeConfig = $scopeConfig;
     }
 
-    public function execute(){
-        
-        $emailData = $this->subscriptionCronRepositoryInterface->getCronEmailFilter();
-        if(count($emailData) > 0){
-            foreach($emailData as $list)
-            {
-                $customer= $this->customerRepository->getById($list->getCustomerId());
-                $customerEmail = $customer->getEmail();
-                $nextDate = $list->getNextDate();
+    public function execute()
+    {
+        try {
+            $billingRemainderWithDays = $this->scopeConfig->getValue(
+                'subscription/general/billing_days_remainder',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            );
+            $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/subscription_email.log');
+            $logger = new \Zend_Log();
+            $logger->addWriter($writer);
+            $logger->info('Mail Sending Start');
+            $emailData = $this->subscriptionCronRepositoryInterface->getCronEmailFilter();
+            if(count($emailData) > 0){
+                foreach($emailData as $list)
+                {
+                    $customer= $this->customerRepository->getById($list->getCustomerId());
+                    $customerEmail = $customer->getEmail();
+                    $nextDate = $list->getNextDate();
 
-                $now = time();
-                $your_date = strtotime($nextDate);
-                $datediff = $now - $your_date;
+                    $now = time();
+                    $your_date = strtotime($nextDate);
+                    $datediff = $now - $your_date;
 
-                $dateCount =  abs(round($datediff / (60 * 60 * 24)));
+                    $dateCount =  abs(round($datediff / (60 * 60 * 24)));
 
-                if($dateCount < 10){
+                    if($dateCount < $billingRemainderWithDays){
 
-                    $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
-                    $logger = new \Zend_Log();
-                    $logger->addWriter($writer);
-                    $logger->info('Mail Sending Start');
+                        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
+                        $logger = new \Zend_Log();
+                        $logger->addWriter($writer);
+                        $logger->info('Mail Sending Start');
 
 
-                    $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID];
-                    $templateVars = [
-                            'message'   => 'Subscription expire in '.$dateCount.' days Please maintain available fund in your account on '.$nextDate,
-                            'name' => $customer->getFirstName()." ".$customer->getLastName(),
-                            'date' => $list->getNextDate(),
-                            'product' => 'sample',
-                            'days' => $dateCount
-                            ];
-                    $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];
-                    $this->inlineTranslation->suspend();
-                    $to = [$customerEmail];
-                    $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_remainder_days')
-                                    ->setTemplateOptions($templateOptions)
-                                    ->setTemplateVars($templateVars)
-                                    ->setFrom($from)
-                                    ->addTo($to)
-                                    ->getTransport();
-                    $transport->sendMessage();
-                    $this->inlineTranslation->resume();
+                        $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID];
+                        $templateVars = [
+                                'message'   => 'Subscription expire in '.$dateCount.' days Please maintain available fund in your account on '.$nextDate,
+                                'name' => $customer->getFirstName()." ".$customer->getLastName(),
+                                'date' => $list->getNextDate(),
+                                'product' => 'sample',
+                                'days' => $dateCount
+                                ];
+                        $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];
+                        $this->inlineTranslation->suspend();
+                        $to = [$customerEmail];
+                        $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_remainder_days')
+                                        ->setTemplateOptions($templateOptions)
+                                        ->setTemplateVars($templateVars)
+                                        ->setFrom($from)
+                                        ->addTo($to)
+                                        ->getTransport();
+                        $transport->sendMessage();
+                        $this->inlineTranslation->resume();
 
-                    $logger->info('Mail Sent End');
+                        $logger->info('Mail Sent End');
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            $logger->info('Subscription Email Error Log :'.json_encode($e));
         }
     }
     

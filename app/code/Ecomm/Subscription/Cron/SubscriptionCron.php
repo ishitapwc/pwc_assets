@@ -238,24 +238,7 @@ class SubscriptionCron
 
 
         // Subscription Purchase Mail Start
-        $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
-        $templateVars = [
-                            'store' => $this->storeManager->getStore(),
-                            'message'   => 'We are excited to welcome you to the community, To make sure you have best product, Thank you for choosing "Daily Subscription Plan" based subscription automaticattly payment will be taken from your account',
-                            'feature1' => 'Cancel at any time, No contracts or commitments. '
-                        ];
-        $from = ['email' => "info@pwc.com", 'name' => 'Subscription Purchase'];
-        $this->inlineTranslation->suspend();
-        
-        $to = [$customerEmail];
-        $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_purchase')
-                        ->setTemplateOptions($templateOptions)
-                        ->setTemplateVars($templateVars)
-                        ->setFrom($from)
-                        ->addTo($to)
-                        ->getTransport();
-        $transport->sendMessage();
-        $this->inlineTranslation->resume();
+            $this->subscriptionPurchaseEmail($customerEmail);
         // Subscription Purchase Mail End
 
         // Create Order From Quote
@@ -264,6 +247,36 @@ class SubscriptionCron
         $order = $this->order->load($orderId);
         $orderSave = $this->saveOrderDetails($quote, $order, $stopService['value']);
         return $orderSave;
+    }
+
+    public function subscriptionPurchaseEmail($customerEmail)
+    {
+        try {
+            $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/subscription_email.log');
+            $logger = new \Zend_Log();
+            $logger->addWriter($writer);
+            $logger->info('Mail Sending Start');
+            $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
+            $templateVars = [
+                                'store' => $this->storeManager->getStore(),
+                                'message'   => 'We are excited to welcome you to the community, To make sure you have best product, Thank you for choosing "Daily Subscription Plan" based subscription automaticattly payment will be taken from your account',
+                                'feature1' => 'Cancel at any time, No contracts or commitments. '
+                            ];
+            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Purchase'];
+            $this->inlineTranslation->suspend();
+            
+            $to = [$customerEmail];
+            $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_purchase')
+                            ->setTemplateOptions($templateOptions)
+                            ->setTemplateVars($templateVars)
+                            ->setFrom($from)
+                            ->addTo($to)
+                            ->getTransport();
+            $transport->sendMessage();
+            $this->inlineTranslation->resume();
+        } catch (\Exception $e) {
+            $logger->info('Subscription Email Error Log :'.json_encode($e));
+        }
     }
 
     /**
@@ -308,37 +321,45 @@ class SubscriptionCron
 
 
     public function subscriptionEndMail($customerEmail, $type){
-        $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
-        if($type == 'Until'){
-            $templateVars = [
-                'store' => $this->storeManager->getStore(),
-                'message'   => 'As you requested, we will cancelled your subscription plan, effective from today.',
-                'msg' => 'Obviously we love to have you back.'
-            ];
-        }elseif($type == 'Cycle'){
-            $templateVars = [
-                'store' => $this->storeManager->getStore(),
-                'message'   => 'Based on your subscription cycle has been ended by toady.',
-                'msg' => 'Obviously we love to have you back.'
-            ];
-        }elseif($type == 'Date'){
-            $templateVars = [
-                'store' => $this->storeManager->getStore(),
-                'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.',
-                'msg' => 'Obviously we love to have you back.'
-            ];
+        try {
+            $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/subscription_email.log');
+            $logger = new \Zend_Log();
+            $logger->addWriter($writer);
+            $logger->info('Mail Sending Start');
+            $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
+            if($type == 'Until'){
+                $templateVars = [
+                    'store' => $this->storeManager->getStore(),
+                    'message'   => 'As you requested, we will cancelled your subscription plan, effective from today.',
+                    'msg' => 'Obviously we love to have you back.'
+                ];
+            }elseif($type == 'Cycle'){
+                $templateVars = [
+                    'store' => $this->storeManager->getStore(),
+                    'message'   => 'Based on your subscription cycle has been ended by toady.',
+                    'msg' => 'Obviously we love to have you back.'
+                ];
+            }elseif($type == 'Date'){
+                $templateVars = [
+                    'store' => $this->storeManager->getStore(),
+                    'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.',
+                    'msg' => 'Obviously we love to have you back.'
+                ];
+            }
+            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Cancel'];
+            $this->inlineTranslation->suspend();
+            $to = [$customerEmail];
+            $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_cancel')
+                            ->setTemplateOptions($templateOptions)
+                            ->setTemplateVars($templateVars)
+                            ->setFrom($from)
+                            ->addTo($to)
+                            ->getTransport();
+            $transport->sendMessage();
+            $this->inlineTranslation->resume();
+        } catch (\Exception $e) {
+            $logger->info('Subscription Email Error Log :'.json_encode($e));
         }
-        $from = ['email' => "info@pwc.com", 'name' => 'Subscription Cancel'];
-        $this->inlineTranslation->suspend();
-        $to = [$customerEmail];
-        $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_cancel')
-                        ->setTemplateOptions($templateOptions)
-                        ->setTemplateVars($templateVars)
-                        ->setFrom($from)
-                        ->addTo($to)
-                        ->getTransport();
-        $transport->sendMessage();
-        $this->inlineTranslation->resume();
     }
 
     /**
