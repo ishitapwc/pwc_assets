@@ -83,6 +83,17 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
     /**
      * Description SubscriptionCron Table AbstractModel
      *
+     * @param empty
+     */
+    public function getCronEmailFilter()
+    {
+        return $this->subscriptionCronFactory->create()->getCollection()
+        ->addFieldToFilter('status', true);
+    }
+
+    /**
+     * Description SubscriptionCron Table AbstractModel
+     *
      * @param array $id
      */
     public function getById($id)
