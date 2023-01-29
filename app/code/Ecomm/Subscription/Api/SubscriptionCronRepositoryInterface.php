@@ -25,16 +25,16 @@ interface SubscriptionCronRepositoryInterface
     /**
      * Save SubList.
      *
-     * @param string $id
-     * @return SubscriptionCronInterface
-     */
-    public function getById(string $id);
-
-    /**
-     * Save SubList.
-     *
      * @param array $filterKey
      * @return SubscriptionCronInterface[]
      */
     public function getCronFilter();
+
+    /**
+     * Save SubList.
+     *
+     * @param int $id
+     * @return SubscriptionCronInterface[]
+     */
+    public function getByCustomerId($id);
 }

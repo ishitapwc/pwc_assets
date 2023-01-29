@@ -5,7 +5,7 @@
           <argument translate="true" name="title" xsi:type="string">Subscription</argument>
           </action> </referenceBlock>
           <referenceContainer name="content">
-               <block class="Magento\Framework\View\Element\Template" cacheable="true" name="my_tab" template="Ecomm_Subscription::subscription.phtml"> </block> 
+               <block class="Ecomm\Subscription\Block\SubscriptionCustomer" cacheable="false" name="subscription_tab" template="Ecomm_Subscription::subscription.phtml"> </block> 
                </referenceContainer> 
                
                </body> 

@@ -77,18 +77,11 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
     {
         return $this->subscriptionCronFactory->create()->getCollection()
         ->addFieldToFilter('status', true)
-        ->addFieldToFilter(['next_date','subscription_end_value'], [['eq'=>date('Y-m-d')],['eq'=>date('Y-m-d'),'eq'=>'0','eq'=>'Yes']]);
-    }
-
-    /**
-     * Description SubscriptionCron Table AbstractModel
-     *
-     * @param empty
-     */
-    public function getCronEmailFilter()
-    {
-        return $this->subscriptionCronFactory->create()->getCollection()
-        ->addFieldToFilter('status', true);
+        ->addFieldToFilter(
+            ['next_date','subscription_end_value'],
+            [ ['eq'=>date('Y-m-d')],
+                    ['in'=>[date('Y-m-d'),0,'Yes']]]
+        );
     }
 
     /**
@@ -96,8 +89,13 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
      *
      * @param array $id
      */
-    public function getById($id)
+    public function getByCustomerId($id)
     {
-        return 'yes';
+        try {
+            return $this->subscriptionCronFactory->create()->getCollection()
+            ->addFieldToFilter('customer_id', $id);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 }
