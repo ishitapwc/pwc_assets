@@ -1,0 +1,34 @@
+<?php
+/** @var \Ecomm\Subscription\Block\Subscription $block */
+?>
+
+<div class="template">
+    <h1><?php var_dump($block->getSubscriptionData()); ?></h1>
+    <div class="table-wrapper orders-history">
+        <table class="data table table-order-items history" id="my-orders-table">
+            <caption class="table-caption"></caption>
+            <thead>
+            <tr>
+                <th scope="col" class="col entity_id">Product name</th>
+                <th scope="col" class="col status">Discount Type</th>
+                <th scope="col" class="col status">Discount Value</th>
+                <th scope="col" class="col createat_at">Created On</th>
+                <th scope="col" class="col status">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php print_r($block->getSubscriptionData()); ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    require([
+        'jquery',
+        'Ecomm_Mysubscription/js/jquery.dataTables.min'
+    ], function($, $t){
+        $(document).ready(function() {
+            $('#my-orders-table').DataTable();
+        } );
+    })
+</script>
