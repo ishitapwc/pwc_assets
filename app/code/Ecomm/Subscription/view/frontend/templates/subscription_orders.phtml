@@ -3,21 +3,26 @@
 ?>
 
 <div class="template">
-    <h1><?php var_dump($block->getSubscriptionData()); ?></h1>
     <div class="table-wrapper orders-history">
         <table class="data table table-order-items history" id="my-orders-table">
             <caption class="table-caption"></caption>
             <thead>
             <tr>
-                <th scope="col" class="col entity_id">Product name</th>
-                <th scope="col" class="col status">Discount Type</th>
-                <th scope="col" class="col status">Discount Value</th>
+                <th scope="col" class="col entity_id">Order ID</th>
+                <th scope="col" class="col status">Product Id</th>
+                <th scope="col" class="col status">Status</th>
                 <th scope="col" class="col createat_at">Created On</th>
-                <th scope="col" class="col status">Action</th>
             </tr>
             </thead>
             <tbody>
-                <?php print_r($block->getSubscriptionData()); ?>
+                <?php foreach($block->getCollection() as $value):  ?>
+                <tr> 
+                    <td><?= $value->getOrderId() ?></td>
+                    <td><?= $value->getProductId() ?></td>
+                    <td><?= ($value->getStatus() == 1) ? "Completed" : "Pending"; ?></td>  
+                    <td><?= $value->getCreatedAt() ?></td>
+                </tr>
+                <?php endforeach ?>
             </tbody>
         </table>
     </div>

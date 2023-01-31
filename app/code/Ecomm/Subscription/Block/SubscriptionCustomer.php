@@ -16,6 +16,7 @@ use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\Element\Template;
 use Ecomm\Subscription\Api\SubscriptionCronRepositoryInterface;
 use Magento\Framework\App\Response\Http;
+use Ecomm\Subscription\Model\ResourceModel\SubscriptionOrder\CollectionFactory;
 
 /**
  * Description Subscription
@@ -25,15 +26,18 @@ class SubscriptionCustomer extends Template
     protected $customerSession;
     protected $subscriptionCronRepositoryInterface;
     protected $response;
+    protected $collectionFactory;
 
     public function __construct(
         Context $context,
         Session $customerSession,
+        CollectionFactory $collectionFactory,
         SubscriptionCronRepositoryInterface $subscriptionCronRepositoryInterface,
         Http $response,
         array $data = []
     ) {
         $this->customerSession = $customerSession;
+        $this->collectionFactory = $collectionFactory;
         $this->subscriptionCronRepositoryInterface = $subscriptionCronRepositoryInterface;
         $this->response = $response;
         parent::__construct($context, $data);
@@ -57,5 +61,11 @@ class SubscriptionCustomer extends Template
     public function getSubscriptionData($customerId)
     {
         return $this->subscriptionCronRepositoryInterface->getByCustomerId($customerId);
+    }
+    public function getCollection()
+    {        
+        $id = $this->getRequest()->getParam('id');
+        $collections = $this->collectionFactory->create()->addFieldToFilter('subscription_cron_id', $id);
+        return $collections;
     }
 }
