@@ -30,10 +30,9 @@ if ($customer != null) {
             '<td>'.$lite->getSubscriptionEndType().'</td>';
             if ($lite->getSubscriptionEndType() == 'Date' || $lite->getSubscriptionEndType() == 'Cycle') {
                 $active .= '<td>'.$lite->getSubscriptionEndValue().'</td>';
-            } else {
-                $active .= '<td><a href="/subscription/myaccount/subend/?id='.$lite->getId().'">Click End</a></td>';
             }
-            $active .= '<td><a href="/subscription/myaccount/orderlist/?id='.$lite->getId().'">View</a></td>';
+            $active .= '<td><a href="/subscription/myaccount/subscriptionorder/?id='.$lite->getId().'">View</a></td>';
+            $active .= '<td><a href="/subscription/myaccount/subend/?id='.$lite->getId().'">Cancel</a></td>';
             $active .= '</tr>';
         } else {
             $endActive .= '<tr>';
@@ -42,7 +41,7 @@ if ($customer != null) {
             '<td>'.$lite->getNextDate().'</td>'.
             '<td>'.$lite->getSubscriptionEndType().'</td>'.
             '<td>'.$lite->getSubscriptionEndValue().'</td>';
-            $endActive .= '<td><a href="/subscription/myaccount/orderlist/?id='.$lite->getId().'">View</a></td>';
+            $endActive .= '<td><a href="/subscription/myaccount/subscriptionorder/?id='.$lite->getId().'">View</a></td>';
             $endActive .= '</tr>';
         }
         
@@ -74,7 +73,9 @@ if ($customer != null) {
     <?php else: ?>
     <div data-role="content">Non Active</div>
     <?php endif; ?>
-
+    <br/>
+        <br/>
+        <br/>
     <div data-role="collapsible">
         <div data-role="trigger">
             <span><h2>End Subscription</h2></span>
@@ -93,7 +94,7 @@ if ($customer != null) {
         "jquery",
         "accordion"
     ],function($) {
-        $("#element").accordion({ active: [0] });
+        $("#element").accordion({ active: [0,1] });
 
     });
 </script>

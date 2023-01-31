@@ -20,15 +20,13 @@ class SubscriptionRemainderDays
      */
     protected $customerRepository;
 
-
-     /**
+    /**
      * StoreManager
      *
      * @var StoreManagerInterface
      */
 
     protected $storeManager;
-
 
     /**
      * TransportBuilder

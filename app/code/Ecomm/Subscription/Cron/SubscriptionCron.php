@@ -20,6 +20,10 @@ use Magento\Framework\Translate\Inline\StateInterface;
 
 class SubscriptionCron
 {
+    private const FIXED_AMOUNT = 'Fixed Amount';
+    private const PERCENTAGE_PRICE = 'Percentage on product Price';
+    private const NOT_ACTIVE = 'Not Active';
+
     /**
      * @var LoggerInterface
      */
@@ -172,7 +176,7 @@ class SubscriptionCron
                 $insert = [];
                 $stopService = $this->getEnd($lodder);
                 if ($stopService['status'] != 'End') {
-                    $report = $this->cronOrderCreater($stopService);
+                    $report = $this->cronOrderCreater($stopService, $lodder);
                     $insert['subscription'] = $report['subscription']->getData();
                     $insert['order_list'] = $report['order_list'];
                     $insert['status'] = $report['status'];
@@ -194,9 +198,10 @@ class SubscriptionCron
      * Get Discount Price
      *
      * @param array $stopService
+     * @param array $lodder
      * @return array
      */
-    private function cronOrderCreater($stopService)
+    private function cronOrderCreater($stopService, $lodder)
     {
         
         $load = $stopService['value'];
@@ -211,7 +216,8 @@ class SubscriptionCron
         $quote->setCustomerIsGuest(0);
         $quote->setStore($store);
         $product=$this->product->load($load->getProductId());
-        $product->setPrice($product->getPrice());
+        $product->setPrice($this->getDiscoutPrice($product->getPrice(), $lodder->getData('dicount_type'), $lodder->getData('dicount_value') ));
+        
         $quote->addProduct($product, 1);
 
         $billingAddressId = $customer->getDefaultBilling();
@@ -233,10 +239,6 @@ class SubscriptionCron
  
         // Collect Totals & Save Quote
         $quote->collectTotals()->save();
-
-        
-
-
         // Subscription Purchase Mail Start
             $this->subscriptionPurchaseEmail($customerEmail);
         // Subscription Purchase Mail End
@@ -377,10 +379,10 @@ class SubscriptionCron
         $subscriptionOrder->setSubscriptionCronId($loader->getId());
         $subscriptionOrder->setQuoteId($quote->getId());
         if ($order->getIncrementId()) {
-            $subscriptionOrder->setOrderId($order->getIncrementId());
+            $subscriptionOrder->setOrderId($order->getId());
             $subscriptionOrder->setStatus(true);
         } else {
-            $subscriptionOrder->setOrderId($order->getIncrementId());
+            $subscriptionOrder->setOrderId($order->getId());
             $subscriptionOrder->setStatus(false);
         }
         try {
@@ -419,6 +421,24 @@ class SubscriptionCron
                 return date("Y-m-d", strtotime("+2 week"));
             case 'monthly':
                 return date("Y-m-d", strtotime("+1 month"));
+        }
+    }
+
+    /**
+     * Get Discount Price
+     *
+     * @param string $type
+     */
+    public function getDiscoutPrice($price, $discountType, $values)
+    {
+
+        if ($discountType == self::FIXED_AMOUNT) {
+            return $values;
+        } elseif ($discountType == self::PERCENTAGE_PRICE) {
+            $value = ($price /100) * $values;
+            return $price - $value;
+        } else {
+            return self::NOT_ACTIVE;
         }
     }
 }

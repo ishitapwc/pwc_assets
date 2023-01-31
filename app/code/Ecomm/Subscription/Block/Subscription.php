@@ -45,6 +45,8 @@ class Subscription extends View
         $product  = $this->getProduct();
         $attr = $product->getResource()->getAttribute('subscription_type');
         $optionValue = [];
+        $atrr = $product->getResource()->getAttribute('subscription_discount_type');
+            $type = $atrr->getSource()->getOptionText($product->getSubscriptionDiscountType());
         
         if ($product->getSubscriptionType() != null) {
             foreach (explode(',', $product->getSubscriptionType()) as $option) {
@@ -60,7 +62,7 @@ class Subscription extends View
         $subData['freeshipping']   = $product->getSubscriptionFreeshipping();
         $subData['type']   = $optionValue;
         $subData['discount_status']   =  $product->getSubscriptionDiscount();
-        $subData['discount_type']   = $product->getSubscriptionDiscountType();
+        $subData['discount_type']   = $type;
         $subData['discount_value']   = $product->getSubscriptionDiscountValue();
 
         return $subData;
