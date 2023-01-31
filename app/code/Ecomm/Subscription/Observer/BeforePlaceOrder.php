@@ -11,6 +11,10 @@ use Ecomm\Subscription\Model\ProductRunner;
 
 class BeforePlaceOrder implements ObserverInterface
 {
+    private const FIXED_AMOUNT = 'Fixed Amount';
+    private const PERCENTAGE_PRICE = 'Percentage on product Price';
+    private const NOT_ACTIVE = 'Not Active';
+
     /**
      * @var LoggerInterface
      */

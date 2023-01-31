@@ -36,15 +36,15 @@
             <div class="fieldset">
                 <div class="field qty">
                     <div class="control text-center">
-                        <label class="label">
+                        <!--<label class="label">
                             <input type="radio" name="subscription" value="0" title="No Subscription"
                             class="input-radio" data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
                             <span><?= $block->escapeHtml(__('No Subscription')) ?></span>
-                        </label>
+                        </label>-->
                         <label class="label">
-                            <input type="radio" name="subscription" value="1" title="Subscription"
+                            <input type="checkbox" name="subscription" value="1" title="Subscription"
                             class="input-radio" data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
-                            <span><?= $block->escapeHtml(__('Subscription With Discount')) ?></span>
+                            <span><?= $block->escapeHtml(__('Subscription')) ?></span>
                         </label>
                     </div>
                 </div>
@@ -95,6 +95,22 @@
                             <input type="number" name="orders" id="orders" value="<?= $block->getProductDefaultQty() * 1 ?>" title="<?= $block->escapeHtmlAttr(__('Qty')) ?>" class="input-text" />
                         </div>
                     </div>
+                    <?php if ($subscription['discount_status']) {?>
+                    <div class="field">
+                        <div class="discount_type">
+                            <label class="label" for="type">
+                                <span><?= $block->escapeHtml(__('Discount Type :')) ?>
+                                <?=$subscription['discount_type']?></span></label>
+
+                        </div>
+                        <div class="discout_value">
+                            <label class="label" for="value">
+                                <span><?= $block->escapeHtml(__('Discount Value :')) ?>
+                            <?=$subscription['discount_value']?></span></label>
+                            
+                        </div>
+                    </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -141,7 +157,7 @@ require(['jquery', "mage/calendar"], function($){
             $("input[name=enddate]").val(today);
             $("input[name=enddate]").attr('min', today);
         $('input[name="subscription"]').on('click',function(){
-            if($(this).val() == 1)
+            if($(this).prop('checked') == true)
                 $('div.subscription').show();
             else
                 $('div.subscription').hide();

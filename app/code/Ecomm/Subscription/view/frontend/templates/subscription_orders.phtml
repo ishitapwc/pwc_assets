@@ -1,0 +1,41 @@
+<?php
+/** @var \Ecomm\Subscription\Block\Subscription $block */
+?>
+
+<div class="template">
+    <div class="table-wrapper orders-history">
+        <table class="data table table-order-items history" id="my-orders-table">
+            <caption class="table-caption"></caption>
+            <thead>
+            <tr>
+                <th scope="col" class="col entity_id">IncrementId</th>
+                <th scope="col" class="col status">Date</th>
+                <th scope="col" class="col createat_at">Order Total</th>
+                <th scope="col" class="col status">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($block->getOrderList() as $list) {
+                    ?>
+            <tr>
+                <td> <?= $list->getIncrementId() ?></td>
+                <td> <?= $list->getCreatedAt() ?></td>
+                <td> <?= $list->getGrandTotal() ?></td>
+                <td> <?= $list->getStatus() ?></td>
+            </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    require([
+        'jquery',
+        'Ecomm_Mysubscription/js/jquery.dataTables.min'
+    ], function($, $t){
+        $(document).ready(function() {
+            $('#my-orders-table').DataTable();
+        } );
+    })
+</script>

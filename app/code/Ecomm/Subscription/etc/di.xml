@@ -4,7 +4,12 @@
      <preference for="Ecomm\Subscription\Api\SubscriptionCronRepositoryInterface"
       type="Ecomm\Subscription\Model\SubscriptionCronRepository" />
 
-      <type name="Magento\Catalog\Ui\Component\Listing\Columns\ProductActions">
+      <preference for="Ecomm\Subscription\Api\Data\SubscriptionOrderInterface"
+      type="Ecomm\Subscription\Model\SubscriptionOrder" />
+      <preference for="Ecomm\Subscription\Api\OrderRepositoryInterface"
+      type="Ecomm\Subscription\Model\OrderRepository" />
+
+            <type name="Magento\Catalog\Ui\Component\Listing\Columns\ProductActions">
         <plugin name="ecom_subscription_edit_data_source" type="Ecomm\Subscription\Ui\Component\Listing\Grid\Column\Action"/>
       </type>
 
@@ -38,5 +43,4 @@
 			</argument>
 		</arguments>
 	</virtualType>
-
 </config>

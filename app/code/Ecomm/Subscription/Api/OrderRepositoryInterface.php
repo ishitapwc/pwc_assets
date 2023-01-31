@@ -10,9 +10,9 @@
 
 namespace Ecomm\Subscription\Api;
 
-use Ecomm\Subscription\Api\Data\SubscriptionCronInterface;
+use Ecomm\Subscription\Api\Data\SubscriptionOrderInterface;
 
-interface SubscriptionCronRepositoryInterface
+interface OrderRepositoryInterface
 {
     /**
      * Save SubList.
@@ -20,21 +20,13 @@ interface SubscriptionCronRepositoryInterface
      * @param Ecomm\Subscription\Api\Data\SubscriptionCronInterface $subscriptionCron
      * @return Ecomm\Subscription\Api\Data\SubscriptionCronInterface
      */
-    public function save(SubscriptionCronInterface $subscriptionCron);
-
-    /**
-     * Save SubList.
-     *
-     * @param array $filterKey
-     * @return SubscriptionCronInterface[]
-     */
-    public function getCronFilter();
+    public function save(SubscriptionOrderInterface $subscriptionOrder);
 
     /**
      * Save SubList.
      *
      * @param int $id
-     * @return SubscriptionCronInterface[]
+     * @return SubscriptionOrderInterface[]
      */
-    public function getByCustomerId($id);
+    public function getOrderList($id);
 }
