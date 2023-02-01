@@ -261,10 +261,10 @@ class SubscriptionCron
             $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
             $templateVars = [
                                 'store' => $this->storeManager->getStore(),
-                                'message'   => 'We are excited to welcome you to the community, To make sure you have best product, Thank you for choosing "Daily Subscription Plan" based subscription automaticattly payment will be taken from your account',
+                                'message'   => 'As per your subscription plan, order has been placed.',
                                 'feature1' => 'Cancel at any time, No contracts or commitments. '
                             ];
-            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Purchase'];
+            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Order Placed'];
             $this->inlineTranslation->suspend();
             
             $to = [$customerEmail];
@@ -332,23 +332,23 @@ class SubscriptionCron
             if($type == 'Until'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
-                    'message'   => 'As you requested, we will cancelled your subscription plan, effective from today.',
+                    'message'   => 'We have successfully cancelled your subscription. Please renew your subscription anytime by visiting our site.',
                     'msg' => 'Obviously we love to have you back.'
                 ];
             }elseif($type == 'Cycle'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
-                    'message'   => 'Based on your subscription cycle has been ended by toady.',
+                    'message'   => 'Based on your subscription plan, today is the last day of the subscription. Please renew your subscription anytime by visiting our site.',
                     'msg' => 'Obviously we love to have you back.'
                 ];
             }elseif($type == 'Date'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
-                    'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.',
+                    'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.  Please renew your subscription anytime by visiting our site',
                     'msg' => 'Obviously we love to have you back.'
                 ];
             }
-            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Cancel'];
+            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Expires'];
             $this->inlineTranslation->suspend();
             $to = [$customerEmail];
             $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_cancel')

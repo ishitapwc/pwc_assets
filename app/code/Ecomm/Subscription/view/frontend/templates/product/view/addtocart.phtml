@@ -44,7 +44,7 @@
                         <label class="label">
                             <input type="checkbox" name="subscription" value="1" title="Subscription"
                             class="input-radio" data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
-                            <span><?= $block->escapeHtml(__('Subscription')) ?></span>
+                            <span><?= $block->escapeHtml(__('Subscribe Now')) ?></span>
                         </label>
                     </div>
                 </div>
@@ -99,8 +99,8 @@
                     <div class="field">
                         <div class="discount_type">
                             <label class="label" for="type">
-                                <span><?= $block->escapeHtml(__('Discount Type :')) ?>
-                                <?=$subscription['discount_type']?></span></label>
+                                <span><?= $block->escapeHtml(__('Discount Type :')) ?><b>
+                                <?=$subscription['discount_type']?></b></span></label>
 
                         </div>
                         <div class="discout_value">

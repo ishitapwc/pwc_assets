@@ -3,6 +3,7 @@
 
     <template id="subscription_purchase" label="Subscription Purchase" file="subscription_purchase.html" type="html" module="Ecomm_Subscription" area="frontend"/>
     <template id="subscription_cancel" label="Subscription Cancel" file="subscription_cancel.html" type="html" module="Ecomm_Subscription" area="frontend"/>
+    <template id="subscription_user_cancel" label="Subscription User Cancel" file="subscription_user_cancel.html" type="html" module="Ecomm_Subscription" area="frontend"/>
 
     <template id="subscription_billing_remainder" label="Subscription Billing Remainder" file="subscription_billing_remainder.html" type="html" module="Ecomm_Subscription" area="frontend"/>
     <template id="subscription_remainder_days" label="Subscription REmainder Days" file="subscription_remainder_days.html" type="html" module="Ecomm_Subscription" area="frontend"/>

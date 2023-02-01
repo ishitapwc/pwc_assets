@@ -16,13 +16,13 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="billing_remainder" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Subscription Billing Remainder</label>
-                    <comment>Based on billing remainder count email will be trigger in the cron</comment>
+                    <label>Subscription Billing Reminder</label>
+                    <comment>Based on billing reminder count email will be trigger in the cron</comment>
                 </field>
 
                 <field id="billing_days_remainder" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Subscription Billing Days Remainder</label>
-                    <comment>Based on billing days remainder count email will be trigger in the cron</comment>
+                    <label>Subscription Billing Days Reminder</label>
+                    <comment>Based on billing days reminder count email will be trigger in the cron</comment>
                 </field>
             </group>
         </section>
