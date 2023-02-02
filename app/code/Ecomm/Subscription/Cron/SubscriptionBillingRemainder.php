@@ -117,12 +117,12 @@ class SubscriptionBillingRemainder
 
                         $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID];
                         $templateVars = [
-                                'message'   => 'Subscription Remainder Mail',
+                                'message'   => 'Please renew your product subscription',
                                 'name' => $customer->getFirstName()." ".$customer->getLastName(),
                                 'date' => $list->getNextDate(),
-                                'product' => 'sample'
+                                'product' => 'Daily'
                                 ];
-                        $from = ['email' => "info@pwc.com", 'name' => 'Subscription Billing Remainder'];
+                        $from = ['email' => "info@pwc.com", 'name' => 'Subscription Reminder'];
                         $this->inlineTranslation->suspend();
                         $to = [$customerEmail];
                         $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_billing_remainder')

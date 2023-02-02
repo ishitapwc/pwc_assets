@@ -60,6 +60,7 @@ class SubscriptionDiscountTypeAttribute implements DataPatchInterface, PatchReve
                     'required' => false,
                     'backend' => '',
                     'sort_order' => '112',
+                    'source' => \Ecomm\Subscription\Model\Config\Source\DiscountType::class,
                     'global' => ScopedAttributeInterface::SCOPE_STORE,
                     'default' => null,
                     'visible' => true,
@@ -71,10 +72,7 @@ class SubscriptionDiscountTypeAttribute implements DataPatchInterface, PatchReve
                     'unique' => false,
                     'apply_to' => '',
                     'group' => $autoSettingsTabName,
-                    'used_in_product_listing' => true,
-                    'option' => [
-                        'values' => ['Fixed Amount','Percentage on product Price']
-                    ]
+                    'used_in_product_listing' => true
                 ]
             );
         }

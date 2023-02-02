@@ -115,10 +115,10 @@ class SubscriptionRemainderDays
 
                         $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID];
                         $templateVars = [
-                                'message'   => 'Subscription expire in '.$dateCount.' days Please maintain available fund in your account on '.$nextDate,
+                                'message'   => 'Subscription is going to expire in  '.$dateCount.' day(s).',
                                 'name' => $customer->getFirstName()." ".$customer->getLastName(),
                                 'date' => $list->getNextDate(),
-                                'product' => 'sample',
+                                'product' => 'Daily',
                                 'days' => $dateCount
                                 ];
                         $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];

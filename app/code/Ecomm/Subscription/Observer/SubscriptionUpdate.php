@@ -37,7 +37,8 @@ class SubscriptionUpdate implements ObserverInterface
          $item = $observer->getQuoteItem();
             $item = ( $item->getParentItem() ? $item->getParentItem() : $item );
             $product = $item->getProduct();
-        if ($this->activeSubscription($item)) {
+            
+        if ($this->activeSubscription($item, $observer)) {
                 $this->logger->info('SubscriptionUpdate '. $this->request->getParam('subscription_type'));
                 $this->logger->info('SubscriptionActive '. $this->request->getParam('subscription_active'));
                 $this->logger->info('SubscriptionDate '. $this->request->getParam('subscription_start_date'));
@@ -49,22 +50,38 @@ class SubscriptionUpdate implements ObserverInterface
     /**
      * Active Subscription.
      *
-     * @param \Magento\Framework\Event\Observer $item
+     * @param QuoteItem $item
+     * @param \Magento\Framework\Event\Observer $observer
      *
      * @return $this
      */
-    public function activeSubscription($item)
+    public function activeSubscription($item, $observer)
     {
         $subscription = $this->request->getParam('subscription');
         $subscriptionType = $this->request->getParam('frequency');
         $subscriptionStartDate = $this->request->getParam('startdate');
         $subscriptionStartDate = date('Y-m-d', strtotime($subscriptionStartDate));
         $subscriptionEndType = $this->request->getParam('subscription_end_by');
+        $product = $observer->getEvent()->getData('product');
+        $discountType = $product->getData('subscription_discount_type');
+        $discountValue = $product->getData('subscription_discount_value');
         
         if ($subscription == 1) {
             $subscriptionEnd = $this->getEndValue($subscriptionEndType);
+            if ($discountType == 1) {
+                $custom_price = $discountValue;
+                $item->setCustomPrice($custom_price);
+                $item->setOriginalCustomPrice($custom_price);
+            } elseif ($discountType == 0) {
+                $temp = ($product->getPrice() / 100) * $discountValue;
+                $custom_price = $product->getPrice() - $temp;
+                $item->setCustomPrice($custom_price);
+                $item->setOriginalCustomPrice($custom_price);
+            }
+            
             $item->setData('subscription', true);
             $item->setData('frequency', $subscriptionType);
+
             if ($subscriptionStartDate > date('Y-m-d')) {
                 $item->setData('subscription_start_date', $subscriptionStartDate);
             } else {
@@ -80,8 +97,6 @@ class SubscriptionUpdate implements ObserverInterface
             } else {
                 throw new InputException(__('Please Select the End Type Value'));
             }
-            
-            $this->logger->info('data '. json_encode($item->getData()));
             return true;
         } else {
             $item->setData('subscription', false);

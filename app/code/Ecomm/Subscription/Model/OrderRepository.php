@@ -66,7 +66,7 @@ class OrderRepository implements OrderRepositoryInterface
     /**
      * Description SubscriptionCron Table AbstractModel
      *
-     * @param SubscriptionCronInterface $subscriptionCron
+     * @param SubscriptionOrderInterface $subscriptionOrder
      */
     public function save(SubscriptionOrderInterface $subscriptionOrder)
     {
@@ -80,7 +80,7 @@ class OrderRepository implements OrderRepositoryInterface
     /**
      * Description SubscriptionCron Table AbstractModel
      *
-     * @param int $subscriptionId
+     * @param int $id
      */
     public function getOrderList($id)
     {
@@ -89,12 +89,12 @@ class OrderRepository implements OrderRepositoryInterface
             $orderList = [];
             $data = $this->subscriptionOrderFactory->create()->getCollection()
             ->addFieldToFilter('subscription_cron_id', $id);
-            foreach($data as $list){
-                try{
+            foreach ($data as $list) {
+                try {
                     $order =  $this->orderInterface->get($list->getOrderId());
                     array_push($orderList, $order);
 
-                }catch(\Exception $e){
+                } catch (\Exception $e) {
                     array_push($orderList, $e->getMessage());
                 }
             }

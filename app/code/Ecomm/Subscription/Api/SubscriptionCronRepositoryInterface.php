@@ -37,4 +37,13 @@ interface SubscriptionCronRepositoryInterface
      * @return SubscriptionCronInterface[]
      */
     public function getByCustomerId($id);
+
+    /**
+     * Save SubList.
+     *
+     * @param int $productId
+     * @param int $customerId
+     * @return SubscriptionCronInterface[]
+     */
+    public function getSub($productId, $customerId);
 }

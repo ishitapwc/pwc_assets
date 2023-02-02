@@ -1,36 +1,13 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-
-/** @var $block \Magento\Catalog\Block\Product\View */
-?>
-<?php $_product = $block->getProduct(); ?>
-<?php $buttonTitle = __('Add to Cart'); ?>
-<?php if ($_product->isSaleable()) :?>
-<div class="box-tocart">
-    <div class="fieldset">
-        <?php if ($block->shouldRenderQuantity()) :?>
-        <div class="field qty">
-            <label class="label" for="qty"><span><?= $block->escapeHtml(__('Qty')) ?></span></label>
-            <div class="control">
-                <input type="number"
-                       name="qty"
-                       id="qty"
-                       min="0"
-                       value="<?= $block->getProductDefaultQty() * 1 ?>"
-                       title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
-                       class="input-text qty"
-                       data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
-                       />
-            </div>
-        </div>
-        <?php endif; ?>
-        <?php  $subStatus = $_product->getData('subscription_status');
+$_product = $block->getProduct();
+$subStatus = $_product->getData('subscription_status');
                $sub_name = $_product->getData('subscription_name');
-               $subscription = $block->getSubscriptionData();
-        if($subStatus) :?>
+               $subscription = $block->getSubscription();
+        if ($this->getSubscribed()) :
+            ?>
+            <span><?= $block->escapeHtml(__('Already Subscribed')) ?></span>
+            <?php
+        elseif (!empty($subscription) )  :?>
         <p><?php //echo  json_encode($_product->getData('type'))  ?></p>
         <div class="box-tocart">
             <div class="fieldset">
@@ -44,7 +21,7 @@
                         <label class="label">
                             <input type="checkbox" name="subscription" value="1" title="Subscription"
                             class="input-radio" data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
-                            <span><?= $block->escapeHtml(__('Subscription')) ?></span>
+                            <span><?= $block->escapeHtml(__('Subscribe Now')) ?></span>
                         </label>
                     </div>
                 </div>
@@ -92,15 +69,15 @@
                         </div>
                         <div class="end_by_cycle">
                             <label class="label" for="orders"><span><?= $block->escapeHtml(__('No of Orders')) ?></span></label>
-                            <input type="number" name="orders" id="orders" value="<?= $block->getProductDefaultQty() * 1 ?>" title="<?= $block->escapeHtmlAttr(__('Qty')) ?>" class="input-text" />
+                            <input type="number" name="orders" id="orders" value="1" class="input-text" />
                         </div>
                     </div>
                     <?php if ($subscription['discount_status']) {?>
                     <div class="field">
                         <div class="discount_type">
                             <label class="label" for="type">
-                                <span><?= $block->escapeHtml(__('Discount Type :')) ?>
-                                <?=$subscription['discount_type']?></span></label>
+                                <span><?= $block->escapeHtml(__('Discount Type :')) ?><b>
+                                <?=$subscription['discount_type']?></b></span></label>
 
                         </div>
                         <div class="discout_value">
@@ -115,18 +92,9 @@
             </div>
         </div>
         <?php endif;?>
-        <div class="actions">
-            <button type="submit"
-                    title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
-                    class="action primary tocart"
-                    id="product-addtocart-button" disabled>
-                <span><?= $block->escapeHtml($buttonTitle) ?></span>
-            </button>
-            <?= $block->getChildHtml('', true) ?>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
+
+
+
 <script type="text/x-magento-init">
     {
         "#product_addtocart_form": {

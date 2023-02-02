@@ -87,6 +87,17 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
     /**
      * Description SubscriptionCron Table AbstractModel
      *
+     * @param empty
+     */
+    public function getCronEmailFilter()
+    {
+        return $this->subscriptionCronFactory->create()->getCollection()
+        ->addFieldToFilter('status', true);
+    }
+
+    /**
+     * Description SubscriptionCron Table AbstractModel
+     *
      * @param array $id
      */
     public function getByCustomerId($id)
@@ -94,6 +105,23 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
         try {
             return $this->subscriptionCronFactory->create()->getCollection()
             ->addFieldToFilter('customer_id', $id);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Description SubscriptionCron Table AbstractModel
+     *
+     * @param int $productId
+     * @param int $customerId
+     */
+    public function getSub($productId, $customerId)
+    {
+        try {
+            return $this->subscriptionCronFactory->create()->getCollection()
+            ->addFieldToFilter('customer_id', $customerId)
+            ->addFieldToFilter('product_id', $productId);
         } catch (\Exception $e) {
             return $e->getMessage();
         }

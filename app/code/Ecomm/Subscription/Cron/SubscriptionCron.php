@@ -17,6 +17,7 @@ use Magento\Sales\Model\Order;
 use Ecomm\Subscription\Model\SubscriptionOrderFactory;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\Translate\Inline\StateInterface;
+use \Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
 class SubscriptionCron
 {
@@ -98,14 +99,16 @@ class SubscriptionCron
     protected $_transportBuilder;
 
     /**
-     * InlineTranslation
+     * StateInterface
      *
      * @var StateInterface
      */
-
     protected $inlineTranslation;
 
-
+    /**
+     * @var OrderSender
+     */
+    protected $orderSender;
 
     /**
      * Get Details
@@ -139,7 +142,8 @@ class SubscriptionCron
         Order $order,
         SubscriptionOrderFactory $subscriptionOrder,
         TransportBuilder $_transportBuilder,
-        StateInterface $inlineTranslation
+        StateInterface $inlineTranslation,
+        OrderSender $orderSender
     ) {
 
         $this->logger = $logger;
@@ -157,6 +161,7 @@ class SubscriptionCron
         $this->subscriptionOrder = $subscriptionOrder;
         $this->_transportBuilder = $_transportBuilder;
         $this->inlineTranslation = $inlineTranslation;
+        $this->orderSender = $orderSender;
     }
 
     /**
@@ -247,6 +252,7 @@ class SubscriptionCron
         $quote = $this->cartRepositoryInterface->get($quote->getId());
         $orderId = $this->cartManagementInterface->placeOrder($quote->getId());
         $order = $this->order->load($orderId);
+        $this->orderSender->send($order);
         $orderSave = $this->saveOrderDetails($quote, $order, $stopService['value']);
         return $orderSave;
     }
@@ -261,10 +267,10 @@ class SubscriptionCron
             $templateOptions = ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $this->storeManager->getStore()->getId()];
             $templateVars = [
                                 'store' => $this->storeManager->getStore(),
-                                'message'   => 'We are excited to welcome you to the community, To make sure you have best product, Thank you for choosing "Daily Subscription Plan" based subscription automaticattly payment will be taken from your account',
+                                'message'   => 'As per your subscription plan, order has been placed.',
                                 'feature1' => 'Cancel at any time, No contracts or commitments. '
                             ];
-            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Purchase'];
+            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Order Placed'];
             $this->inlineTranslation->suspend();
             
             $to = [$customerEmail];
@@ -332,23 +338,23 @@ class SubscriptionCron
             if($type == 'Until'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
-                    'message'   => 'As you requested, we will cancelled your subscription plan, effective from today.',
+                    'message'   => 'We have successfully cancelled your subscription. Please renew your subscription anytime by visiting our site.',
                     'msg' => 'Obviously we love to have you back.'
                 ];
             }elseif($type == 'Cycle'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
-                    'message'   => 'Based on your subscription cycle has been ended by toady.',
+                    'message'   => 'Based on your subscription plan, today is the last day of the subscription. Please renew your subscription anytime by visiting our site.',
                     'msg' => 'Obviously we love to have you back.'
                 ];
             }elseif($type == 'Date'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
-                    'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.',
+                    'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.  Please renew your subscription anytime by visiting our site',
                     'msg' => 'Obviously we love to have you back.'
                 ];
             }
-            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Cancel'];
+            $from = ['email' => "info@pwc.com", 'name' => 'Subscription Expires'];
             $this->inlineTranslation->suspend();
             $to = [$customerEmail];
             $transport = $this->_transportBuilder->setTemplateIdentifier('subscription_cancel')
@@ -411,15 +417,15 @@ class SubscriptionCron
     {
 
         switch ($type) {
-            case 'daily':
+            case 0:
                 return date("Y-m-d", strtotime("+1 day"));
-            case 'bidaily':
+            case 1:
                 return date("Y-m-d", strtotime("+2 day"));
-            case 'weekly':
+            case 2:
                 return date("Y-m-d", strtotime("+1 week"));
-            case 'biweekly':
+            case 3:
                 return date("Y-m-d", strtotime("+2 week"));
-            case 'monthly':
+            case 4:
                 return date("Y-m-d", strtotime("+1 month"));
         }
     }
@@ -427,14 +433,16 @@ class SubscriptionCron
     /**
      * Get Discount Price
      *
-     * @param string $type
+     * @param string $price
+     * @param string $discountType
+     * @param string $values
      */
     public function getDiscoutPrice($price, $discountType, $values)
     {
 
-        if ($discountType == self::FIXED_AMOUNT) {
+        if ($discountType == 1) {
             return $values;
-        } elseif ($discountType == self::PERCENTAGE_PRICE) {
+        } elseif ($discountType == 0) {
             $value = ($price /100) * $values;
             return $price - $value;
         } else {

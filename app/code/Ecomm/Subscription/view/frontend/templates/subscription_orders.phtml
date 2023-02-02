@@ -16,7 +16,9 @@
             </thead>
             <tbody>
                 <?php
+
                 foreach ($block->getOrderList() as $list) {
+                    echo json_encode($list->getData());
                     ?>
             <tr>
                 <td> <?= $list->getIncrementId() ?></td>

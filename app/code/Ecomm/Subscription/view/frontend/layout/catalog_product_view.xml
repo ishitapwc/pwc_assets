@@ -2,10 +2,12 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 <body>
 
-<referenceBlock name="product.info.addtocart">
-  <action method="setTemplate">
+<referenceBlock name="product.info.form.content">
+<block class="Ecomm\Subscription\Block\SubscriptionCustomer" as="extra_options" before="product.info.addtocart"
+ cacheable="false" name="subscription_tab" template="Ecomm_Subscription::product/view/addtocart.phtml"> </block>
+  <!-- <action method="setTemplate">
    <argument name="template" xsi:type="string">Ecomm_Subscription::product/view/addtocart.phtml</argument>
-</action>
+</action> -->
 </referenceBlock>
 </body>
 
