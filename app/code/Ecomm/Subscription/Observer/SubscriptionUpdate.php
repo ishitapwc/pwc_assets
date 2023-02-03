@@ -37,7 +37,8 @@ class SubscriptionUpdate implements ObserverInterface
          $item = $observer->getQuoteItem();
             $item = ( $item->getParentItem() ? $item->getParentItem() : $item );
             $product = $item->getProduct();
-        if ($this->activeSubscription($item,$observer)) {
+            
+        if ($this->activeSubscription($item, $observer)) {
                 $this->logger->info('SubscriptionUpdate '. $this->request->getParam('subscription_type'));
                 $this->logger->info('SubscriptionActive '. $this->request->getParam('subscription_active'));
                 $this->logger->info('SubscriptionDate '. $this->request->getParam('subscription_start_date'));
@@ -49,7 +50,8 @@ class SubscriptionUpdate implements ObserverInterface
     /**
      * Active Subscription.
      *
-     * @param \Magento\Framework\Event\Observer $item
+     * @param QuoteItem $item
+     * @param \Magento\Framework\Event\Observer $observer
      *
      * @return $this
      */
@@ -64,14 +66,13 @@ class SubscriptionUpdate implements ObserverInterface
         $discountType = $product->getData('subscription_discount_type');
         $discountValue = $product->getData('subscription_discount_value');
         
-        
         if ($subscription == 1) {
             $subscriptionEnd = $this->getEndValue($subscriptionEndType);
-            if($discountType == '212'){
+            if ($discountType == 1) {
                 $custom_price = $discountValue;
                 $item->setCustomPrice($custom_price);
                 $item->setOriginalCustomPrice($custom_price);
-            }elseif($discountType == '213'){
+            } elseif ($discountType == 0) {
                 $temp = ($product->getPrice() / 100) * $discountValue;
                 $custom_price = $product->getPrice() - $temp;
                 $item->setCustomPrice($custom_price);
@@ -96,8 +97,6 @@ class SubscriptionUpdate implements ObserverInterface
             } else {
                 throw new InputException(__('Please Select the End Type Value'));
             }
-            
-            $this->logger->info('data '. json_encode($item->getData()));
             return true;
         } else {
             $item->setData('subscription', false);

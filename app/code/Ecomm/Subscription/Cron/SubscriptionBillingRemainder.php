@@ -120,7 +120,7 @@ class SubscriptionBillingRemainder
                                 'message'   => 'Please renew your product subscription',
                                 'name' => $customer->getFirstName()." ".$customer->getLastName(),
                                 'date' => $list->getNextDate(),
-                                'product' => 'Daily'
+                                'product' => 'Organic Product'
                                 ];
                         $from = ['email' => "info@pwc.com", 'name' => 'Subscription Reminder'];
                         $this->inlineTranslation->suspend();

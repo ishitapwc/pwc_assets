@@ -16,7 +16,9 @@
             </thead>
             <tbody>
                 <?php
+
                 foreach ($block->getOrderList() as $list) {
+                    
                     ?>
             <tr>
                 <td> <?= $list->getIncrementId() ?></td>

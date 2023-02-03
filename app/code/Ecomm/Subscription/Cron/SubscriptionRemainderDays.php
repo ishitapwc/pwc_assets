@@ -118,7 +118,7 @@ class SubscriptionRemainderDays
                                 'message'   => 'Subscription is going to expire in  '.$dateCount.' day(s).',
                                 'name' => $customer->getFirstName()." ".$customer->getLastName(),
                                 'date' => $list->getNextDate(),
-                                'product' => 'Daily',
+                                'product' => 'Organic Product',
                                 'days' => $dateCount
                                 ];
                         $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];

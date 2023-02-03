@@ -17,6 +17,7 @@ use Magento\Sales\Model\Order;
 use Ecomm\Subscription\Model\SubscriptionOrderFactory;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\Translate\Inline\StateInterface;
+use \Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
 class SubscriptionCron
 {
@@ -98,14 +99,16 @@ class SubscriptionCron
     protected $_transportBuilder;
 
     /**
-     * InlineTranslation
+     * StateInterface
      *
      * @var StateInterface
      */
-
     protected $inlineTranslation;
 
-
+    /**
+     * @var OrderSender
+     */
+    protected $orderSender;
 
     /**
      * Get Details
@@ -139,7 +142,8 @@ class SubscriptionCron
         Order $order,
         SubscriptionOrderFactory $subscriptionOrder,
         TransportBuilder $_transportBuilder,
-        StateInterface $inlineTranslation
+        StateInterface $inlineTranslation,
+        OrderSender $orderSender
     ) {
 
         $this->logger = $logger;
@@ -157,6 +161,7 @@ class SubscriptionCron
         $this->subscriptionOrder = $subscriptionOrder;
         $this->_transportBuilder = $_transportBuilder;
         $this->inlineTranslation = $inlineTranslation;
+        $this->orderSender = $orderSender;
     }
 
     /**
@@ -247,6 +252,7 @@ class SubscriptionCron
         $quote = $this->cartRepositoryInterface->get($quote->getId());
         $orderId = $this->cartManagementInterface->placeOrder($quote->getId());
         $order = $this->order->load($orderId);
+        $this->orderSender->send($order);
         $orderSave = $this->saveOrderDetails($quote, $order, $stopService['value']);
         return $orderSave;
     }
@@ -411,15 +417,15 @@ class SubscriptionCron
     {
 
         switch ($type) {
-            case 'daily':
+            case 0:
                 return date("Y-m-d", strtotime("+1 day"));
-            case 'bidaily':
+            case 1:
                 return date("Y-m-d", strtotime("+2 day"));
-            case 'weekly':
+            case 2:
                 return date("Y-m-d", strtotime("+1 week"));
-            case 'biweekly':
+            case 3:
                 return date("Y-m-d", strtotime("+2 week"));
-            case 'monthly':
+            case 4:
                 return date("Y-m-d", strtotime("+1 month"));
         }
     }
@@ -427,14 +433,16 @@ class SubscriptionCron
     /**
      * Get Discount Price
      *
-     * @param string $type
+     * @param string $price
+     * @param string $discountType
+     * @param string $values
      */
     public function getDiscoutPrice($price, $discountType, $values)
     {
 
-        if ($discountType == self::FIXED_AMOUNT) {
+        if ($discountType == 1) {
             return $values;
-        } elseif ($discountType == self::PERCENTAGE_PRICE) {
+        } elseif ($discountType == 0) {
             $value = ($price /100) * $values;
             return $price - $value;
         } else {

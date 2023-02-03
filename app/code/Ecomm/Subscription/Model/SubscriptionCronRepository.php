@@ -109,4 +109,21 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
             return $e->getMessage();
         }
     }
+
+    /**
+     * Description SubscriptionCron Table AbstractModel
+     *
+     * @param int $productId
+     * @param int $customerId
+     */
+    public function getSub($productId, $customerId)
+    {
+        try {
+            return $this->subscriptionCronFactory->create()->getCollection()
+            ->addFieldToFilter('customer_id', $customerId)
+            ->addFieldToFilter('product_id', $productId);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

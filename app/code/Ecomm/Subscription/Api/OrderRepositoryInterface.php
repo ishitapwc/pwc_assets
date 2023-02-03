@@ -17,7 +17,7 @@ interface OrderRepositoryInterface
     /**
      * Save SubList.
      *
-     * @param Ecomm\Subscription\Api\Data\SubscriptionCronInterface $subscriptionCron
+     * @param Ecomm\Subscription\Api\Data\SubscriptionOrderInterface $subscriptionOrder
      * @return Ecomm\Subscription\Api\Data\SubscriptionCronInterface
      */
     public function save(SubscriptionOrderInterface $subscriptionOrder);

@@ -1,4 +1,5 @@
 <?php
+
 $customer = $block->getCustomer();
 $subscriptionData = null;
 if ($customer != null) {
@@ -22,10 +23,11 @@ if ($customer != null) {
 
         $endActive = $active;
     foreach ($subscriptionData as $lite) {
+
         if ($lite->getStatus()) {
             $active .= '<tr>';
-            $active .= '<td>'.$lite->getProductId().'</td>'.
-            '<td>'.$lite->getSubscriptionType().'</td>'.
+            $active .= '<td>'.$lite->getData('product_name').'</td>'.
+            '<td>'.$lite->getData('sub_type').'</td>'.
             '<td>'.$lite->getNextDate().'</td>'.
             '<td>'.$lite->getSubscriptionEndType().'</td>';
             if ($lite->getSubscriptionEndType() == 'Date' || $lite->getSubscriptionEndType() == 'Cycle') {
@@ -36,8 +38,8 @@ if ($customer != null) {
             $active .= '</tr>';
         } else {
             $endActive .= '<tr>';
-            $endActive .= '<td>'.$lite->getProductId().'</td>'.
-            '<td>'.$lite->getSubscriptionType().'</td>'.
+            $endActive .= '<td>'.$lite->getData('product_name').'</td>'.
+            '<td>'.$lite->getData('sub_type').'</td>'.
             '<td>'.$lite->getNextDate().'</td>'.
             '<td>'.$lite->getSubscriptionEndType().'</td>'.
             '<td>'.$lite->getSubscriptionEndValue().'</td>';

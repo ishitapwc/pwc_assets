@@ -1,0 +1,40 @@
+div.subscription{
+    background-color: blueviolet !important;
+    padding: 25px 25px 5px 25px !important;
+    margin-bottom: 15px !important;
+    border-radius: 15px !important;
+    color: white !important;
+}
+input.input-text{
+    border-radius: 10px !important;
+}
+input.input-radio{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+  
+    border: 2px solid lightskyblue;
+    transition: 0.2s all linear;
+    margin-right: 5px;
+  
+    position: relative;
+    top: 2px;
+}
+select.form-control{
+    border-radius: 10px !important;
+}
+input.input-radio:checked {
+    border: 6px solid lightskyblue;
+  }
+
+.subsdone{
+    background-color: blueviolet;
+    padding: 10px;
+    border-radius: 10px;
+    color: whitesmoke;
+    font-size: large;
+}

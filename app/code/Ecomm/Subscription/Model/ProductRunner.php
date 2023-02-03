@@ -45,9 +45,9 @@ class ProductRunner
     public function productDiscount($product):array
     {
         $discount = [];
-        $atrr = $product->getResource()->getAttribute('subscription_discount_type');
-        $type = $atrr->getSource()->getOptionText($product->getSubscriptionDiscountType());
-        $discount['type'] = $type;
+        // $atrr = $product->getResource()->getAttribute('subscription_discount_type');
+        // $type = $atrr->getSource()->getOptionText($product->getSubscriptionDiscountType());
+        $discount['type'] = $product->getSubscriptionDiscountType();
         $discount['value'] = $product->getSubscriptionDiscountValue();
         return $discount;
     }
