@@ -346,7 +346,7 @@ class SubscriptionCron
                     'store' => $this->storeManager->getStore(),
                     'message'   => 'We have successfully cancelled your subscription. Please renew your subscription anytime by visiting our site.',
                     'msg' => 'Obviously we love to have you back.',
-                    'product'=> $product,
+                    'product'=> $product_name,
                     'product_price'=>$product_price
                 ];
             }elseif($type == 'Cycle'){
@@ -354,7 +354,7 @@ class SubscriptionCron
                     'store' => $this->storeManager->getStore(),
                     'message'   => 'Based on your subscription plan, today is the last day of the subscription. Please renew your subscription anytime by visiting our site.',
                     'msg' => 'Obviously we love to have you back.',
-                    'product'=> $product,
+                    'product'=> $product_name,
                     'product_price'=>$product_price
                 ];
             }elseif($type == 'Date'){
@@ -362,7 +362,7 @@ class SubscriptionCron
                     'store' => $this->storeManager->getStore(),
                     'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.  Please renew your subscription anytime by visiting our site',
                     'msg' => 'Obviously we love to have you back.',
-                    'product'=> $product,
+                    'product'=> $product_name,
                     'product_price'=>$product_price
                 ];
             }
