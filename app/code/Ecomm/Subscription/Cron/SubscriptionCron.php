@@ -304,14 +304,14 @@ class SubscriptionCron
                 if ($loadder->getSubscriptionEndValue() == date('Y-m-d')) {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail($customerEmail, 'Date', $loadder->productId());
+                    $this->subscriptionEndMail($customerEmail, 'Date', $loadder->getproductId());
                 }
                 return ['status'=>$status,'value'=>$loadder];
             case 'Cycle':
                 if ($loadder->getSubscriptionEndValue() == '0') {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail($customerEmail, 'Cycle' $loadder->productId());
+                    $this->subscriptionEndMail($customerEmail, 'Cycle',$loadder->getproductId());
                 } else {
                     $loadder->setSubscriptionEndValue($loadder->getSubscriptionEndValue()-1);
                 }
@@ -320,7 +320,7 @@ class SubscriptionCron
                 if ($loadder->getSubscriptionEndValue() == 'Yes') {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail($customerEmail, 'Until' $loadder->productId());
+                    $this->subscriptionEndMail($customerEmail, 'Until', $loadder->getproductId());
                 }
                 return ['status'=>$status,'value'=>$loadder];
             default:
@@ -335,7 +335,7 @@ class SubscriptionCron
             $product = $this->product->load($productId);
             $product_name = $product->getName();
             $product_price = $product->getPrice();
-            
+
             $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/subscription_email.log');
             $logger = new \Zend_Log();
             $logger->addWriter($writer);
