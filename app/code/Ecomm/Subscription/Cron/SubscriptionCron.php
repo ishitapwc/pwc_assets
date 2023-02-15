@@ -19,6 +19,7 @@ use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\Translate\Inline\StateInterface;
 use \Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
+
 class SubscriptionCron
 {
     private const FIXED_AMOUNT = 'Fixed Amount';
@@ -223,7 +224,7 @@ class SubscriptionCron
         $product=$this->product->load($load->getProductId());
         $product->setPrice($this->getDiscoutPrice($product->getPrice(), $lodder->getData('dicount_type'), $lodder->getData('dicount_value') ));
         
-        $quote->addProduct($product, 1);
+        $quote->addProduct($product, $load->getQty());
 
         $billingAddressId = $customer->getDefaultBilling();
         $billingAddress = $this->addressFactory->create()->load($billingAddressId);
@@ -303,14 +304,14 @@ class SubscriptionCron
                 if ($loadder->getSubscriptionEndValue() == date('Y-m-d')) {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail($customerEmail, 'Date');
+                    $this->subscriptionEndMail($customerEmail, 'Date', $loadder->productId());
                 }
                 return ['status'=>$status,'value'=>$loadder];
             case 'Cycle':
                 if ($loadder->getSubscriptionEndValue() == '0') {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail($customerEmail, 'Cycle');
+                    $this->subscriptionEndMail($customerEmail, 'Cycle' $loadder->productId());
                 } else {
                     $loadder->setSubscriptionEndValue($loadder->getSubscriptionEndValue()-1);
                 }
@@ -319,7 +320,7 @@ class SubscriptionCron
                 if ($loadder->getSubscriptionEndValue() == 'Yes') {
                     $loadder->setStatus(false);
                     $status = 'End';
-                    $this->subscriptionEndMail($customerEmail, 'Until');
+                    $this->subscriptionEndMail($customerEmail, 'Until' $loadder->productId());
                 }
                 return ['status'=>$status,'value'=>$loadder];
             default:
@@ -328,8 +329,13 @@ class SubscriptionCron
     }
 
 
-    public function subscriptionEndMail($customerEmail, $type){
+    public function subscriptionEndMail($customerEmail, $type, $productId){
         try {
+
+            $product = $this->product->load($productId);
+            $product_name = $product->getName();
+            $product_price = $product->getPrice();
+            
             $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/subscription_email.log');
             $logger = new \Zend_Log();
             $logger->addWriter($writer);
@@ -339,19 +345,25 @@ class SubscriptionCron
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
                     'message'   => 'We have successfully cancelled your subscription. Please renew your subscription anytime by visiting our site.',
-                    'msg' => 'Obviously we love to have you back.'
+                    'msg' => 'Obviously we love to have you back.',
+                    'product'=> $product,
+                    'product_price'=>$product_price
                 ];
             }elseif($type == 'Cycle'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
                     'message'   => 'Based on your subscription plan, today is the last day of the subscription. Please renew your subscription anytime by visiting our site.',
-                    'msg' => 'Obviously we love to have you back.'
+                    'msg' => 'Obviously we love to have you back.',
+                    'product'=> $product,
+                    'product_price'=>$product_price
                 ];
             }elseif($type == 'Date'){
                 $templateVars = [
                     'store' => $this->storeManager->getStore(),
                     'message'   => 'As per your subscription end date, we will cancelled your subscription plan, effective from today.  Please renew your subscription anytime by visiting our site',
-                    'msg' => 'Obviously we love to have you back.'
+                    'msg' => 'Obviously we love to have you back.',
+                    'product'=> $product,
+                    'product_price'=>$product_price
                 ];
             }
             $from = ['email' => "info@pwc.com", 'name' => 'Subscription Expires'];

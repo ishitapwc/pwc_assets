@@ -121,7 +121,8 @@ class SubscriptionCronRepository implements SubscriptionCronRepositoryInterface
         try {
             return $this->subscriptionCronFactory->create()->getCollection()
             ->addFieldToFilter('customer_id', $customerId)
-            ->addFieldToFilter('product_id', $productId);
+            ->addFieldToFilter('product_id', $productId)
+            ->addFieldToFilter('status', 1);
         } catch (\Exception $e) {
             return $e->getMessage();
         }

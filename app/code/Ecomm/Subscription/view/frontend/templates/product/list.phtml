@@ -53,7 +53,9 @@ $_helper = $block->getData('outputHelper');
                      id="product-item-info_<?= /* @noEscape */ $_product->getId() ?>"
                      data-container="product-<?= /* @noEscape */ $viewMode ?>">
                      <?php if ($_product->getSubscriptionStatus()):?>
-                      <span style="background:#8a2be2;color:white;padding:5px;border-radius:5px" class="subscription"> <?= $escaper->escapeHtml(__('Subscription')) ?>
+                      <span 
+                      style="background:#8a2be2;color:white;padding:5px;border-radius:5px" 
+                      class="subscription"> <?= $escaper->escapeHtml(__('Subscription')) ?>
                                             </span><?php endif; ?>
 
                     <?php
@@ -93,7 +95,8 @@ $_helper = $block->getData('outputHelper');
                                               data-product-sku="<?= $escaper->escapeHtml($_product->getSku()) ?>"
                                               action="<?= $escaper->escapeUrl($postParams['action']) ?>"
                                               method="post">
-                                            <?php $optionsData = $block->getData('viewModel')->getOptionsData($_product); ?>
+                                            <?php $optionsData = $block->getData('viewModel')
+                                            ->getOptionsData($_product); ?>
                                             <?php foreach ($optionsData as $optionItem): ?>
                                                 <input type="hidden"
                                                        name="<?= $escaper->escapeHtml($optionItem['name']) ?>"

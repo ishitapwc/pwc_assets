@@ -21,10 +21,10 @@
                     
                     ?>
             <tr>
-                <td> <?= $list->getIncrementId() ?></td>
-                <td> <?= $list->getCreatedAt() ?></td>
-                <td> <?= $list->getGrandTotal() ?></td>
-                <td> <?= $list->getStatus() ?></td>
+                <td> <?= /* @noEscape */ $list->getIncrementId() ?></td>
+                <td> <?= /* @noEscape */ $list->getCreatedAt() ?></td>
+                <td> <?= /* @noEscape */ $list->getGrandTotal() ?></td>
+                <td> <?= /* @noEscape */ $list->getStatus() ?></td>
             </tr>
             <?php } ?>
             </tbody>

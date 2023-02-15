@@ -169,7 +169,7 @@ class SubscriptionCustomer extends Template
         $product  = $this->getProduct();
         $customerId =  $this->getCustomer();
         try{
-            if($customerId != null){
+            if ($customerId != null) {
                 $data = $this->subscriptionCronRepositoryInterface->getSub($product->getId(), $customerId->getId());
                 if ($data->getData() != null) {
                     return true;

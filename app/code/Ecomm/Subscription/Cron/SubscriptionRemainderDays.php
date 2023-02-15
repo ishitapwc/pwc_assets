@@ -6,6 +6,7 @@ use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Ecomm\Subscription\Api\SubscriptionCronRepositoryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Catalog\Model\Product;
 
 class SubscriptionRemainderDays
 {
@@ -53,6 +54,8 @@ class SubscriptionRemainderDays
      */
     protected $searchCriteriaBuilder;
 
+    protected $product;
+
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
@@ -66,6 +69,7 @@ class SubscriptionRemainderDays
         CustomerRepositoryInterface $customerRepository,
         StateInterface $inlineTranslation,
         StoreManagerInterface $storeManager,
+        Product $product,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -74,6 +78,7 @@ class SubscriptionRemainderDays
         $this->_transportBuilder = $_transportBuilder;
         $this->inlineTranslation = $inlineTranslation;
         $this->orderRepository = $orderRepository;
+        $this->product = $product;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->subscriptionCronRepositoryInterface = $subscriptionCronRepositoryInterface;
         $this->customerRepository = $customerRepository;
@@ -99,6 +104,11 @@ class SubscriptionRemainderDays
                     $customerEmail = $customer->getEmail();
                     $nextDate = $list->getNextDate();
 
+                    $product = $this->product->load($list->getProductId());
+                    $product_name = $product->getName();
+                    $product_price = $product->getPrice();
+
+
                     $now = time();
                     $your_date = strtotime($nextDate);
                     $datediff = $now - $your_date;
@@ -118,7 +128,8 @@ class SubscriptionRemainderDays
                                 'message'   => 'Subscription is going to expire in  '.$dateCount.' day(s).',
                                 'name' => $customer->getFirstName()." ".$customer->getLastName(),
                                 'date' => $list->getNextDate(),
-                                'product' => 'Organic Product',
+                                'product' => $product_name,
+                                'product_price' => $product_price,
                                 'days' => $dateCount
                                 ];
                         $from = ['email' => "info@pwc.com", 'name' => 'Subscription Remainder Days'];

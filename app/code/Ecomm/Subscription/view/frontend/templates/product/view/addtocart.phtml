@@ -1,22 +1,21 @@
 <?php
 $_product = $block->getProduct();
 $subStatus = $_product->getData('subscription_status');
-               $sub_name = $_product->getData('subscription_name');
-               $subscription = $block->getSubscription();
-        if ($this->getSubscribed()) :
-            ?>
+$sub_name = $_product->getData('subscription_name');
+$subscription = $block->getSubscription();
+if ($block->getSubscribed()): ?>
             <div class="box-tocart">
                 <div class="fieldset">
                     <div class="field qty">
                         <div class="control text-center">
-                            <label class="label subsdone"><span class=""><?= $block->escapeHtml(__('Already Subscribed')) ?></span>
+                            <label class="label subsdone">
+                                <span class=""><?= $block->escapeHtml(__('Already Subscribed')) ?></span>
                             </label>
                         </div>
                     </div>
                 </div>
             </div>
-            <?php
-        elseif (!empty($subscription) )  :?>
+<?php elseif (!empty($subscription)):?>
         <p><?php //echo  json_encode($_product->getData('type'))  ?></p>
         <div class="box-tocart">
             <div class="fieldset">
@@ -24,8 +23,16 @@ $subStatus = $_product->getData('subscription_status');
                     <div class="control text-center">
                         <label class="label">
                             <input type="checkbox" name="subscription" value="1" title="Subscription"
-                            class="input-radio" data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
+                            class="input-radio" 
+                            data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" />
                             <span><?= $block->escapeHtml(__('Subscribe Now')) ?></span>
+                            <ul class="sub_offer">
+                                <li><label for=""><?= $block->escapeHtml(__('Discount Type :')) ?></label><b>
+                                <?=/* @noEscape */$subscription['discount_type']?></b></span></label></li>
+                                <li><label class="label" for="value">
+                                <?= $block->escapeHtml(__('Discount Value :')) ?>
+                            <?=/* @noEscape */ $subscription['discount_value']?></label></li>
+                            </ul>
                         </label>
                     </div>
                 </div>
@@ -33,46 +40,62 @@ $subStatus = $_product->getData('subscription_status');
             <div class="subscription">
                 <div class="fieldset">
                     <div class="field">
-                        <label class="label" for="frequency"><span><?= $block->escapeHtml(__('Frequency')) ?></span></label>
+                        <label class="label" for="frequency"><span>
+                            <?= $block->escapeHtml(__('Frequency')) ?>
+                    </span></label>
                         <div class="control">
                             <select name='frequency' class='form-control'>
                                 <?php
                                 foreach ($subscription['type'] as $key => $value) { ?>
-                                    <option value="<?= $key ?>"><?= $value ?></option>
+                                    <option value="<?=/* @noEscape */ $key ?>"><?=/* @noEscape */ $value ?></option>
                                 <?php } ?>
                             </select>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label" for="qty"><span><?= $block->escapeHtml(__('Subscription Start Date')) ?></span></label>
+                        <label class="label" for="qty"><span><?= $block->escapeHtml(__('Subscription Start Date')) ?>
+                    </span></label>
                         <div class="control">
-                            <input type="date" name="startdate" id="eventdate" placeholder="Event Date" value="" class="input-text"  data-validate="{required:true, 'validate-date':true}" >
+                        <input type="date" name="startdate" id="eventdate" 
+                         placeholder="Event Date"
+                         value="" class="input-text"
+                         data-validate="{required:true, 'validate-date':true}" >
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label" for="qty"><span><?= $block->escapeHtml(__('Subscription End By')) ?></span></label>
+                        <label class="label" for="qty">
+                            <span><?= $block->escapeHtml(__('Subscription End By')) ?></span></label>
                         <div class="control">
                             <label class="label">
-                                <input type="radio" name="subscription_end_by" value="Date" title="Subscription" class="input-radio"  />
+                                <input type="radio" 
+                                    name="subscription_end_by" 
+                                    value="Date" title="Subscription" class="input-radio"  />
                                 <span><?= $block->escapeHtml(__('End By Date')) ?></span>
                             </label>
                             <label class="label">
-                                <input type="radio" name="subscription_end_by" value="Cycle" title="Subscription" class="input-radio" />
+                                <input type="radio" 
+                                    name="subscription_end_by" 
+                                    value="Cycle" title="Subscription" class="input-radio" />
                                 <span><?= $block->escapeHtml(__('End By Cycle')) ?></span>
                             </label>
                             <label class="label">
-                                <input type="radio" name="subscription_end_by" value="Until" title="Subscription" class="input-radio" />
+                                <input type="radio" 
+                                    name="subscription_end_by" 
+                                    value="Until" 
+                                    title="Subscription" class="input-radio" />
                                 <span><?= $block->escapeHtml(__('Until You Cancel')) ?></span>
                             </label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="end_by_date">
-                            <label class="label" for="enddate"><span><?= $block->escapeHtml(__('Select End Date')) ?></span></label>
+                            <label class="label" for="enddate"><span><?= $block->escapeHtml(__('Select End Date')) ?>
+                        </span></label>
                             <input type="date" name="enddate" class="input-text">
                         </div>
                         <div class="end_by_cycle">
-                            <label class="label" for="orders"><span><?= $block->escapeHtml(__('No of Orders')) ?></span></label>
+                            <label class="label" for="orders"><span><?= $block->escapeHtml(__('No of Orders')) ?> 
+                        </span></label>
                             <input type="number" name="orders" id="orders" value="1" class="input-text" />
                         </div>
                     </div>
@@ -81,13 +104,13 @@ $subStatus = $_product->getData('subscription_status');
                         <div class="discount_type">
                             <label class="label" for="type">
                                 <span><?= $block->escapeHtml(__('Discount Type :')) ?><b>
-                                <?=$subscription['discount_type']?></b></span></label>
+                                <?=/* @noEscape */$subscription['discount_type']?></b></span></label>
 
                         </div>
                         <div class="discout_value">
                             <label class="label" for="value">
                                 <span><?= $block->escapeHtml(__('Discount Value :')) ?>
-                            <?=$subscription['discount_value']?></span></label>
+                            <?=/* @noEscape */ $subscription['discount_value']?></span></label>
                             
                         </div>
                     </div>
@@ -129,11 +152,13 @@ require(['jquery', "mage/calendar"], function($){
             $("input[name=enddate]").val(today);
             $("input[name=enddate]").attr('min', today);
         $('input[name="subscription"]').on('click',function(){
-            if($(this).prop('checked') == true)
+            if($(this).prop('checked') == true){
                 $('div.subscription').show();
-            else
+                $('ul.sub_offer').hide();
+            }else{
                 $('div.subscription').hide();
-        });
+                $('ul.sub_offer').show();
+    }});
         $('input[name="subscription_end_by"]').on('click',function(){
             if($(this).val() == 'Date'){
                 $('div.end_by_date').show();

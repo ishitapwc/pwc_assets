@@ -29,6 +29,7 @@
          <column name="next_date" nullable="false" xsi:type="date" comment="Subscription next date"/>
          <column name="last_action_date"  nullable="false" xsi:type="datetime" comment="Last Subscription Date"/>
          <column name="last_action_status" nullable="true" xsi:type="tinyint" comment="Last Subscription Status"/>
+         <column name="qty"  nullable="false" xsi:type="int" comment="Qty"/>
          <column name="status" nullable="true" xsi:type="tinyint" comment="Status"/>
     </table>
 

@@ -84,7 +84,6 @@ class OrderRepository implements OrderRepositoryInterface
      */
     public function getOrderList($id)
     {
-
         try {
             $orderList = [];
             $data = $this->subscriptionOrderFactory->create()->getCollection()

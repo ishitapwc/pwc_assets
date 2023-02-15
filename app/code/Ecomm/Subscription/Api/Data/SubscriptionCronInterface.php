@@ -30,6 +30,7 @@ interface SubscriptionCronInterface
     public const LAST_ACTION_DATE         = 'last_action_date';
     public const LAST_ACTION_STATUS       = 'last_action_status';
     public const STATUS                   = 'status';
+    public const QTY                      = 'qty';
 
     /**
      * Get ID
@@ -255,4 +256,19 @@ interface SubscriptionCronInterface
      * @return DataInterface
      */
     public function setStatus($status);
+
+    /**
+     * Get Order Item Qty
+     *
+     * @return int|null
+     */
+    public function getQty();
+
+    /**
+     * Set Order Item Qty
+     *
+     * @param int $qty
+     * @return DataInterface
+     */
+    public function setQty($qty);
 }

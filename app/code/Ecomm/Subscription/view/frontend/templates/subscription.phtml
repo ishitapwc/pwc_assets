@@ -43,7 +43,8 @@ if ($customer != null) {
             '<td>'.$lite->getNextDate().'</td>'.
             '<td>'.$lite->getSubscriptionEndType().'</td>'.
             '<td>'.$lite->getSubscriptionEndValue().'</td>';
-            $endActive .= '<td><a href="/subscription/myaccount/subscriptionorder/?id='.$lite->getId().'">View</a></td>';
+            $endActive .= '<td>
+            <a href="/subscription/myaccount/subscriptionorder/?id='.$lite->getId().'">View</a></td>';
             $endActive .= '</tr>';
         }
         
@@ -68,7 +69,7 @@ if ($customer != null) {
         </div>
     </div>
     
-    <?php if ($active != ''):
+    <?php /* @noEscape */ if ($active != ''):
             echo '<div data-role="content">' . $active . ' </div>';
         ?>
        
@@ -83,7 +84,7 @@ if ($customer != null) {
             <span><h2>Expired Subscription</h2></span>
         </div>
     </div>
-    <?php if ($endActive != null):
+    <?php /* @noEscape */ if ($endActive != null):
             echo '<div data-role="content">' . $endActive . ' </div>';
         ?>
     <?php else: ?>

@@ -6,6 +6,7 @@ use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Ecomm\Subscription\Api\SubscriptionCronRepositoryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Catalog\Model\Product;
 
 class SubscriptionBillingRemainder
 {
@@ -55,6 +56,8 @@ class SubscriptionBillingRemainder
      */
     protected $searchCriteriaBuilder;
 
+    protected $product;
+
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -71,6 +74,7 @@ class SubscriptionBillingRemainder
         StoreManagerInterface $storeManager,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
+        Product $product,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         $this->storeManager     = $storeManager;
@@ -78,6 +82,7 @@ class SubscriptionBillingRemainder
         $this->customerRepository = $customerRepository;
         $this->_transportBuilder = $_transportBuilder;
         $this->inlineTranslation = $inlineTranslation;
+        $this->product = $product;
         $this->orderRepository = $orderRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->scopeConfig = $scopeConfig;
@@ -102,6 +107,10 @@ class SubscriptionBillingRemainder
                     $customerEmail = $customer->getEmail();
                     $nextDate = $list->getNextDate();
 
+                    $product = $this->product->load($list->getProductId());
+                    $product_name = $product->getName();
+                    $product_price = $product->getPrice();
+
                     $now = time();
                     $your_date = strtotime($nextDate);
                     $datediff = $now - $your_date;
@@ -120,7 +129,8 @@ class SubscriptionBillingRemainder
                                 'message'   => 'Please renew your product subscription',
                                 'name' => $customer->getFirstName()." ".$customer->getLastName(),
                                 'date' => $list->getNextDate(),
-                                'product' => 'Organic Product'
+                                'product' => $product_name,
+                                'product_price' => $product_price
                                 ];
                         $from = ['email' => "info@pwc.com", 'name' => 'Subscription Reminder'];
                         $this->inlineTranslation->suspend();

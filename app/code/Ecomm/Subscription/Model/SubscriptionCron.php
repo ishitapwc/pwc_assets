@@ -321,4 +321,25 @@ class SubscriptionCron extends AbstractModel implements SubscriptionCronInterfac
     {
         return $this->setData(SubscriptionCronInterface::STATUS, $status);
     }
+
+    /**
+     * Get Order Item Qty
+     *
+     * @return mixed
+     */
+    public function getQty()
+    {
+        return $this->getData(SubscriptionCronInterface::QTY);
+    }
+
+    /**
+     * Set Order Item Qty
+     *
+     * @param int $qty
+     * @return string
+     */
+    public function setQty($qty)
+    {
+        return $this->setData(SubscriptionCronInterface::QTY, $qty);
+    }
 }

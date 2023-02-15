@@ -102,7 +102,8 @@ class BeforePlaceOrder implements ObserverInterface
                     $data = $this->subscriptionCronFactory->create();
                     $listCron = $data->getCollection()
                     ->addFieldToFilter('customer_id', $order->getCustomerId())
-                    ->addFieldToFilter('product_id', $items->getProductId());
+                    ->addFieldToFilter('product_id', $items->getProductId())
+                    ->addFieldToFilter('status', 1);
                     if (count($listCron->getData()) == 0) {
                         $data->setProductId($items->getProductId());
                         $data->setCustomerId($order->getCustomerId());
@@ -116,6 +117,7 @@ class BeforePlaceOrder implements ObserverInterface
                         $data->setLastActionDate(null);
                         $data->setLastActionStatus(null);
                         $data->setStatus(true);
+                        $data->setQty($items->getQtyOrdered());
                         $data->save();
                     }
                 } else {
